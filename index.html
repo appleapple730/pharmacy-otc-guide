@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>OTC Pharmacy Guide | 調剤薬局OTC案内</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ── Reset & Base ── */
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP',
+                   'Noto Sans SC', 'Noto Sans KR', 'Helvetica Neue', sans-serif;
+      background: #f0f9ff;
+      min-height: 100vh;
+    }
+
+    /* ── Screen transition ── */
+    .screen { animation: fadeUp .22s ease-out both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Touch interaction ── */
+    .tap { transition: transform .1s, opacity .1s; cursor: pointer; user-select: none; -webkit-user-select: none; }
+    .tap:active { transform: scale(.96); opacity: .84; }
+
+    /* ── Checkbox labels ── */
+    .chk-label { cursor: pointer; user-select: none; -webkit-user-select: none; }
+
+    /* ── Perforated tear line (consumer/staff divider) ── */
+    .tear {
+      display: flex; align-items: center; gap: .5rem;
+      margin: 1.5rem 0 1rem;
+    }
+    .tear::before, .tear::after {
+      content: ''; flex: 1;
+      border-top: 2px dashed #cbd5e1;
+    }
+    .tear-label {
+      font-size: .6rem; font-weight: 700; color: #94a3b8;
+      letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
+    }
+
+    /* ── Staff prescription zone ── */
+    .staff-zone {
+      background: #f8fafc;
+      border: 1.5px dashed #94a3b8;
+      border-radius: 1rem;
+      padding: 1.25rem;
+    }
+
+    /* ── Emergency pulse ── */
+    @keyframes em-pulse { 0%,100%{background:#fef2f2} 50%{background:#fee2e2} }
+    .em-pulse { animation: em-pulse 2.5s ease-in-out infinite; }
+
+    /* ── Print styles ── */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; }
+      .screen { animation: none !important; }
+      .staff-zone {
+        border: 1.5px solid #64748b !important;
+        background: #f8fafc !important;
+        break-inside: avoid;
+      }
+      .tear::before, .tear::after { border-color: #64748b !important; }
+      .tear-label { color: #64748b !important; }
+      .product-card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div id="app" class="min-h-screen"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════
+//
+//   ██████╗  █████╗ ████████╗ █████╗     ██╗      █████╗ ██╗   ██╗███████╗██████╗
+//   ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗    ██║     ██╔══██╗╚██╗ ██╔╝██╔════╝██╔══██╗
+//   ██║  ██║███████║   ██║   ███████║    ██║     ███████║ ╚████╔╝ █████╗  ██████╔╝
+//   ██║  ██║██╔══██║   ██║   ██╔══██║    ██║     ██╔══██║  ╚██╔╝  ██╔══╝  ██╔══██╗
+//   ██████╔╝██║  ██║   ██║   ██║  ██║    ███████╗██║  ██║   ██║   ███████╗██║  ██║
+//   ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝    ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
+//
+//   このセクションのみ編集可能です。テキスト・商品名・画像パスを自由に変更してください。
+//   Non-engineers: ONLY edit this DATA LAYER section.
+//
+// ══════════════════════════════════════════════════════════════════════════
+
+
+// ─────────────────────────────────────────────────────────────────────────
+//  1. UI Strings  /  UIテキスト
+//     各言語のボタン名、タイトル、注意文などすべての表示文字列
+// ─────────────────────────────────────────────────────────────────────────
+const UI = {
+  en: {
+    // Language screen
+    langPrompt:  "Please select your language",
+    // Screening
+    scrTitle:    "Safety Check",
+    scrSub:      "Please answer a few questions before we recommend any medicine.",
+    rfTitle:     "⚠️ Do you have ANY of these symptoms RIGHT NOW?",
+    rfNote:      "These may require emergency care. Please do NOT self-medicate.",
+    bgTitle:     "Please tell us about yourself",
+    nextBtn:     "Next →",
+    // Navigation
+    backBtn:     "← Back",
+    restartBtn:  "Start Over",
+    // Symptoms
+    sympTitle:   "Symptom Checker",
+    // Result
+    resTitle:         "Recommended Medicine",
+    resPathLabel:     "Your reported symptoms",
+    resAlertTitle:    "⚠️ Please consult the pharmacist before purchasing",
+    resAlertBody:     "Based on your health information, a pharmacist should advise you before you take any medicine.",
+    resStaffTitle:    "📋 For Pharmacy Staff  ／  薬局スタッフ用",
+    resStaffNote:     "Please show this screen to the pharmacist.",
+    resPathJaLabel:   "症状経緯 (Symptom path):",
+    resProdJaLabel:   "推奨商品 (Recommended products):",
+    resCondJaLabel:   "申告事項 (Disclosed conditions):",
+    resConsultBadge:  "要薬剤師確認 / Pharmacist consult required",
+    resCautionLabel:  "⚠️ Caution",
+    resPrimaryBadge:  "⭐ PRIMARY RECOMMENDATION",
+    resAltBadge:      "ALTERNATIVE",
+    resPrintBtn:      "🖨 Print / Save",
+    // Emergency
+    emTitle:  "🚨 Please Seek Medical Attention Immediately",
+    emMsg:    "Your symptoms may require urgent medical care. Do NOT take OTC medicine.",
+    emAction: "Call emergency services or go to the nearest hospital NOW.",
+    emNum:    "📞 Emergency (Japan): 119",
+    emStaff:  "【スタッフへ】お客様は緊急症状を訴えています。119番通報またはAEDの手配、医療機関への緊急受診案内をお願いします。",
+    // Red flag items (ANY checked → Emergency screen)
+    rfItems: [
+      "Difficulty breathing / shortness of breath",
+      "Severe chest pain or tightness",
+      "Very high fever — above 39°C (102°F)",
+      "Confusion, extreme dizziness, or fainting",
+      "Sudden severe headache — worst of your life",
+      "Sudden numbness or weakness on one side of the body",
+    ],
+    // Background items (checked → caution alerts on result)
+    bgItems: [
+      "Pregnant or breastfeeding",
+      "Child under 15 years old",
+      "High blood pressure (hypertension)",
+      "Diabetes",
+      "Known drug allergy",
+      "Liver or kidney disease",
+    ],
+  },
+  zh: {
+    langPrompt:  "请选择语言",
+    scrTitle:    "安全检查",
+    scrSub:      "在推荐药物之前，请回答以下问题。",
+    rfTitle:     "⚠️ 您现在是否有以下任何症状？",
+    rfNote:      "这些症状可能需要紧急医疗处置，请勿自行用药。",
+    bgTitle:     "请告知您的基本情况",
+    nextBtn:     "下一步 →",
+    backBtn:     "← 返回",
+    restartBtn:  "重新开始",
+    sympTitle:   "症状确认",
+    resTitle:         "推荐药物",
+    resPathLabel:     "您报告的症状",
+    resAlertTitle:    "⚠️ 购买前请咨询药剂师",
+    resAlertBody:     "根据您的健康状况，服药前请先与药剂师沟通。",
+    resStaffTitle:    "📋 药局工作人员专用 ／ 薬局スタッフ用",
+    resStaffNote:     "请将此页面出示给药剂师。",
+    resPathJaLabel:   "症状経緯 (症状经过):",
+    resProdJaLabel:   "推奨商品 (推荐商品):",
+    resCondJaLabel:   "申告事項 (健康情况):",
+    resConsultBadge:  "要薬剤師確認 / 需咨询药剂师",
+    resCautionLabel:  "⚠️ 注意",
+    resPrimaryBadge:  "⭐ 首选推荐",
+    resAltBadge:      "备选",
+    resPrintBtn:      "🖨 打印 / 保存",
+    emTitle:  "🚨 请立即就医",
+    emMsg:    "您的症状可能需要紧急医疗处置，请勿自行服用非处方药。",
+    emAction: "请立即拨打119（救护车）或前往最近的医院。",
+    emNum:    "📞 紧急救援（日本）: 119",
+    emStaff:  "【スタッフへ】お客様は緊急症状を訴えています。119番通報またはAEDの手配、医療機関への緊急受診案内をお願いします。",
+    rfItems: [
+      "呼吸困难 / 气短",
+      "严重胸痛或胸部压迫感",
+      "高烧（超过39°C）",
+      "意识模糊、严重头晕或晕厥",
+      "突发剧烈头痛（有生以来最严重）",
+      "突然出现的身体一侧麻木或无力",
+    ],
+    bgItems: [
+      "怀孕或哺乳期",
+      "15岁以下儿童",
+      "高血压",
+      "糖尿病",
+      "已知药物过敏",
+      "肝脏或肾脏疾病",
+    ],
+  },
+  ko: {
+    langPrompt:  "언어를 선택하세요",
+    scrTitle:    "안전 확인",
+    scrSub:      "약을 추천하기 전에 몇 가지 질문에 답해 주세요.",
+    rfTitle:     "⚠️ 현재 다음 증상이 있습니까?",
+    rfNote:      "이 증상은 긴급 의료 처치가 필요합니다. 자가 투약하지 마세요.",
+    bgTitle:     "본인 상태를 알려주세요",
+    nextBtn:     "다음 →",
+    backBtn:     "← 뒤로",
+    restartBtn:  "처음부터",
+    sympTitle:   "증상 확인",
+    resTitle:         "추천 의약품",
+    resPathLabel:     "선택하신 증상",
+    resAlertTitle:    "⚠️ 구매 전 약사 상담 필수",
+    resAlertBody:     "건강 상태로 인해 약 복용 전 약사와 상담하시기 바랍니다.",
+    resStaffTitle:    "📋 약국 직원용 ／ 薬局スタッフ用",
+    resStaffNote:     "이 화면을 약사에게 보여주세요.",
+    resPathJaLabel:   "症状経緯 (증상 경과):",
+    resProdJaLabel:   "推奨商品 (추천 상품):",
+    resCondJaLabel:   "申告事項 (건강 상태):",
+    resConsultBadge:  "要薬剤師確認 / 약사 상담 필요",
+    resCautionLabel:  "⚠️ 주의",
+    resPrimaryBadge:  "⭐ 주요 추천",
+    resAltBadge:      "대안",
+    resPrintBtn:      "🖨 인쇄 / 저장",
+    emTitle:  "🚨 즉시 의료기관을 방문하세요",
+    emMsg:    "귀하의 증상은 긴급 의료 처치가 필요할 수 있습니다. OTC 약을 복용하지 마세요.",
+    emAction: "즉시 119에 전화하거나 가장 가까운 병원으로 가세요.",
+    emNum:    "📞 응급 (일본): 119",
+    emStaff:  "【スタッフへ】お客様は緊急症状を訴えています。119番通報またはAEDの手配、医療機関への緊急受診案内をお願いします。",
+    rfItems: [
+      "호흡 곤란 / 숨 가쁨",
+      "심한 흉통 또는 흉부 압박",
+      "고열 (39°C 이상)",
+      "의식 혼미, 극심한 어지럼증 또는 실신",
+      "갑작스러운 극심한 두통 (평생 경험한 것 중 최악)",
+      "신체 한쪽의 갑작스러운 마비 또는 무력감",
+    ],
+    bgItems: [
+      "임신 중 또는 수유 중",
+      "15세 미만 어린이",
+      "고혈압",
+      "당뇨병",
+      "약물 알레르기",
+      "간 또는 신장 질환",
+    ],
+  },
+};
+
+// Japanese translations for Staff View  /  スタッフ向け日本語表記
+const RF_JA = [
+  "呼吸困難・息切れ",
+  "激しい胸の痛み・圧迫感",
+  "高熱（39°C超）",
+  "意識の混濁・激しいめまい・失神",
+  "突然の激しい頭痛（これまでで最悪）",
+  "突然起こった片側の手足のしびれ・脱力",
+];
+const BG_JA = [
+  "妊娠中・授乳中",
+  "15歳未満の小児",
+  "高血圧",
+  "糖尿病",
+  "薬物アレルギーあり",
+  "肝臓・腎臓疾患あり",
+];
+// Maps bgItems index → caution condition key
+const BG_KEYS = ["pregnancy","child","hypertension","diabetes","drugAllergy","kidney"];
+
+
+// ─────────────────────────────────────────────────────────────────────────
+//  2. Symptom Decision Tree  /  症状分岐ロジック
+//     "next" には SYMPTOM_NODES のキー（継続）または RESULT_NODES のキー（終端）を指定
+// ─────────────────────────────────────────────────────────────────────────
+const SYMPTOM_NODES = {
+  root: {
+    question: {
+      en: "What is your main symptom today?",
+      zh: "您今天的主要症状是什么？",
+      ko: "오늘의 주요 증상이 무엇인가요?",
+    },
+    questionJa: "主な症状を選んでください",
+    icon: "🩺",
+    options: [
+      { label:{en:"🤕  Headache / Body pain",      zh:"🤕  头痛 / 身体疼痛",        ko:"🤕  두통 / 몸 통증"},
+        labelJa:"頭痛・身体の痛み",           next:"headache_q1" },
+      { label:{en:"🤧  Cold / Flu symptoms",        zh:"🤧  感冒 / 流感症状",         ko:"🤧  감기 / 독감 증상"},
+        labelJa:"風邪・インフルエンザ症状",    next:"cold_q1" },
+      { label:{en:"🤢  Stomach / Digestive trouble",zh:"🤢  胃肠问题",               ko:"🤢  소화기 문제"},
+        labelJa:"胃腸・消化器症状",           next:"stomach_q1" },
+      { label:{en:"🌸  Allergy symptoms",           zh:"🌸  过敏症状",               ko:"🌸  알레르기 증상"},
+        labelJa:"アレルギー症状",             next:"allergy_q1" },
+      { label:{en:"👁️  Eye irritation / Redness",  zh:"👁️  眼部不适 / 眼红",       ko:"👁️  눈 충혈 / 불편"},
+        labelJa:"目の症状（充血・かゆみ・疲れ目）", next:"result_eye" },
+      { label:{en:"💪  Muscle / Joint pain",        zh:"💪  肌肉 / 关节疼痛",        ko:"💪  근육 / 관절 통증"},
+        labelJa:"筋肉・関節の痛み",           next:"result_muscle" },
+      { label:{en:"🌙  Menstrual pain",             zh:"🌙  生理痛",                 ko:"🌙  생리통"},
+        labelJa:"生理痛",                     next:"result_menstrual" },
+    ],
+  },
+  headache_q1: {
+    question: {
+      en: "Which best describes your pain?",
+      zh: "哪个最能描述您的疼痛情况？",
+      ko: "통증을 가장 잘 설명하는 것은?",
+    },
+    questionJa: "痛みの状態を教えてください",
+    icon: "🤕",
+    options: [
+      { label:{en:"Simple headache — no fever, no cold symptoms",
+               zh:"单纯头痛 — 无发烧、无感冒症状",
+               ko:"단순 두통 — 발열·감기 증상 없음"},
+        labelJa:"頭痛のみ（発熱・風邪症状なし）", next:"result_headache" },
+      { label:{en:"Headache + Fever",
+               zh:"头痛 + 发烧",
+               ko:"두통 + 발열"},
+        labelJa:"頭痛＋発熱", next:"result_fever" },
+      { label:{en:"Headache + Cold symptoms (runny nose, cough…)",
+               zh:"头痛 + 感冒症状（流鼻涕、咳嗽等）",
+               ko:"두통 + 감기 증상 (콧물, 기침 등)"},
+        labelJa:"頭痛＋風邪症状（鼻水・咳など）", next:"result_cold_general" },
+    ],
+  },
+  cold_q1: {
+    question: {
+      en: "What is your main cold symptom?",
+      zh: "您的主要感冒症状是什么？",
+      ko: "주요 감기 증상이 무엇인가요?",
+    },
+    questionJa: "主な風邪の症状を選んでください",
+    icon: "🤧",
+    options: [
+      { label:{en:"Runny nose / Sneezing (mainly)",
+               zh:"流鼻涕 / 打喷嚏（为主）",
+               ko:"콧물 / 재채기 (주로)"},
+        labelJa:"鼻水・くしゃみ（鼻症状中心）", next:"result_cold_nose" },
+      { label:{en:"Cough (mainly)",
+               zh:"咳嗽（为主）",
+               ko:"기침 (주로)"},
+        labelJa:"咳（咳症状中心）", next:"result_cold_cough" },
+      { label:{en:"Sore throat",
+               zh:"喉咙痛",
+               ko:"인후통 (목 아픔)"},
+        labelJa:"のどの痛み", next:"result_cold_throat" },
+      { label:{en:"Multiple symptoms — general cold",
+               zh:"多种综合症状 — 综合感冒",
+               ko:"복합 증상 — 종합 감기"},
+        labelJa:"複数の症状（総合感冒）", next:"result_cold_general" },
+    ],
+  },
+  stomach_q1: {
+    question: {
+      en: "What stomach symptom do you have?",
+      zh: "您有哪种胃肠症状？",
+      ko: "어떤 소화기 증상이 있나요?",
+    },
+    questionJa: "胃腸の症状を選んでください",
+    icon: "🤢",
+    options: [
+      { label:{en:"Nausea / Vomiting",        zh:"恶心 / 呕吐",      ko:"메스꺼움 / 구토"},
+        labelJa:"吐き気・嘔吐", next:"result_nausea" },
+      { label:{en:"Diarrhea / Loose stools",  zh:"腹泻 / 稀便",      ko:"설사 / 묽은 변"},
+        labelJa:"下痢・軟便", next:"result_diarrhea" },
+      { label:{en:"Stomach cramps / Abdominal pain",zh:"胃痉挛 / 腹痛",ko:"복통 / 경련"},
+        labelJa:"腹痛・胃痛・腹部けいれん", next:"result_stomachpain" },
+      { label:{en:"Heartburn / Acid reflux",  zh:"烧心 / 胃酸反流",  ko:"가슴쓰림 / 위산 역류"},
+        labelJa:"胸やけ・胃酸逆流", next:"result_heartburn" },
+    ],
+  },
+  allergy_q1: {
+    question: {
+      en: "What type of allergy symptom?",
+      zh: "您有哪种过敏症状？",
+      ko: "어떤 알레르기 증상인가요?",
+    },
+    questionJa: "アレルギーの種類を選んでください",
+    icon: "🌸",
+    options: [
+      { label:{en:"Hay fever — sneezing, runny nose, itchy eyes",
+               zh:"花粉症 — 打喷嚏、流鼻涕、眼睛痒",
+               ko:"꽃가루 알레르기 — 재채기·콧물·눈 가려움"},
+        labelJa:"花粉症（くしゃみ・鼻水・目のかゆみ）", next:"result_hayfever" },
+      { label:{en:"Skin rash / Itching",
+               zh:"皮疹 / 皮肤瘙痒",
+               ko:"피부 발진 / 가려움"},
+        labelJa:"皮膚の発疹・かゆみ", next:"result_skin_allergy" },
+    ],
+  },
+};
+
+
+// ─────────────────────────────────────────────────────────────────────────
+//  3. Result Nodes  /  結果ノード
+//     products[0] = 第一推奨、products[1] = 代替品
+//     cautionFor: これらのconditionが選択されていたら薬剤師アラートを表示
+// ─────────────────────────────────────────────────────────────────────────
+const RESULT_NODES = {
+  result_headache:     { products:["loxonin_s","bufferin_a"],       cautionFor:["pregnancy","hypertension","kidney","child"] },
+  result_fever:        { products:["bufferin_a","loxonin_s"],       cautionFor:["pregnancy","child","kidney"] },
+  result_cold_nose:    { products:["benzablock_nose","pabron_gold"],cautionFor:["hypertension","child","pregnancy"] },
+  result_cold_cough:   { products:["pabron_gold","bron_liquid"],    cautionFor:["hypertension","pregnancy"] },
+  result_cold_throat:  { products:["stona_spray","nodonuru"],       cautionFor:[] },
+  result_cold_general: { products:["pabron_gold","benzablock_lp"],  cautionFor:["hypertension","child","pregnancy"] },
+  result_nausea:       { products:["seirogan_sugar","biofermin_s"], cautionFor:["pregnancy"] },
+  result_diarrhea:     { products:["seirogan_sugar","biofermin_s"], cautionFor:["pregnancy"] },
+  result_stomachpain:  { products:["buscopan","seirogan_sugar"],    cautionFor:["pregnancy","hypertension"] },
+  result_heartburn:    { products:["gaster_10","cabujin"],          cautionFor:[] },
+  result_hayfever:     { products:["allegra_fx","claritin_ex"],     cautionFor:["child"] },
+  result_skin_allergy: { products:["muhi_s","restamin"],            cautionFor:["child","pregnancy"] },
+  result_eye:          { products:["rohto_cool","sante_fx"],        cautionFor:[] },
+  result_muscle:       { products:["salonpas","feitas_gel"],        cautionFor:["pregnancy","kidney"] },
+  result_menstrual:    { products:["eve_a","naron_ace"],            cautionFor:["pregnancy"] },
+};
+
+
+// ─────────────────────────────────────────────────────────────────────────
+//  4. Products  /  医薬品データ
+//     image: 実際のファイルパス（例: "/images/loxonin_s.png"）に置き換えてください
+//     cautionFor: この条件が選択されている場合、商品カードに注意書きを表示
+// ─────────────────────────────────────────────────────────────────────────
+const PRODUCTS = {
+  loxonin_s: {
+    nameJa:"ロキソニンS",
+    name:{en:"Loxonin S",zh:"乐松S（洛索洛芬）",ko:"록소닌S"},
+    desc:{
+      en:"Fast-acting NSAID pain reliever and fever reducer. Effective for headache, dental pain, and general body pain.",
+      zh:"速效消炎镇痛退烧药，对头痛、牙痛和全身疼痛有显著疗效。",
+      ko:"빠른 효과의 NSAIDs 진통·해열제. 두통, 치통, 전신 통증에 효과적.",
+    },
+    image:"https://placehold.co/110x150/dbeafe/1e40af?text=ロキソニンS",
+    cautionFor:["pregnancy","hypertension","kidney"],
+    cautionDesc:{
+      en:"Avoid if pregnant or have kidney/heart disease. Use with caution if you have hypertension.",
+      zh:"孕妇及肾病、心脏病患者请避免使用。高血压患者请谨慎。",
+      ko:"임신 중, 신장·심장 질환 시 피하세요. 고혈압 시 주의.",
+    },
+  },
+  bufferin_a: {
+    nameJa:"バファリンA",
+    name:{en:"Bufferin A",zh:"百服宁A（阿司匹林）",ko:"버퍼린A"},
+    desc:{
+      en:"Aspirin-based analgesic effective for headaches and fever. Buffered formula is gentler on the stomach.",
+      zh:"阿司匹林类镇痛退烧药，含胃黏膜保护剂，对胃部刺激较小。",
+      ko:"두통·발열에 효과적인 아스피린 기반 진통제. 위장 보호 완충 제형.",
+    },
+    image:"https://placehold.co/110x150/dbeafe/1e40af?text=バファリンA",
+    cautionFor:["pregnancy","child"],
+    cautionDesc:{
+      en:"Not for children under 15 or pregnant women.",
+      zh:"15岁以下儿童及孕妇禁用。",
+      ko:"15세 미만 어린이 및 임산부는 사용 불가.",
+    },
+  },
+  pabron_gold: {
+    nameJa:"パブロンゴールドA",
+    name:{en:"Pabron Gold A",zh:"帕布朗金牌A",ko:"파브론 골드A"},
+    desc:{
+      en:"Japan's most trusted multi-symptom cold medicine. Relieves runny nose, cough, fever, and sore throat simultaneously.",
+      zh:"日本最受信赖的综合感冒药，同时缓解流鼻涕、咳嗽、发烧和喉咙痛。",
+      ko:"일본의 신뢰받는 종합 감기약. 콧물·기침·발열·인후통을 동시에 완화.",
+    },
+    image:"https://placehold.co/110x150/dcfce7/14532d?text=パブロンGA",
+    cautionFor:["hypertension","child","pregnancy"],
+    cautionDesc:{
+      en:"Consult pharmacist if you have hypertension, are pregnant, or administering to a child.",
+      zh:"高血压、孕妇或儿童用药前请咨询药剂师。",
+      ko:"고혈압·임신·어린이 복용 시 약사에게 상담하세요.",
+    },
+  },
+  benzablock_nose: {
+    nameJa:"ベンザブロック鼻炎薬α",
+    name:{en:"BenzaBlock Rhinitis α",zh:"苯扎布洛克鼻炎药α",ko:"벤자블록 비염약α"},
+    desc:{
+      en:"Targeted nasal relief for runny nose, congestion, and sneezing from cold or allergy.",
+      zh:"针对感冒或过敏引起的流鼻涕、鼻塞和打喷嚏，提供专项鼻部缓解。",
+      ko:"감기·알레르기로 인한 콧물, 코막힘, 재채기를 집중 완화.",
+    },
+    image:"https://placehold.co/110x150/dcfce7/14532d?text=ベンザブロックα",
+    cautionFor:["hypertension","diabetes"],
+    cautionDesc:{
+      en:"Caution if you have hypertension or diabetes. Consult pharmacist.",
+      zh:"高血压或糖尿病患者请注意，建议咨询药剂师。",
+      ko:"고혈압·당뇨 시 주의. 약사에게 상담하세요.",
+    },
+  },
+  benzablock_lp: {
+    nameJa:"ベンザブロックLPカプセル",
+    name:{en:"BenzaBlock LP Capsule",zh:"苯扎布洛克LP胶囊",ko:"벤자블록LP 캡슐"},
+    desc:{
+      en:"Multi-symptom cold capsule covering runny nose, cough, sore throat, and mild fever.",
+      zh:"综合感冒胶囊，覆盖流鼻涕、咳嗽、喉咙痛和轻度发烧。",
+      ko:"콧물, 기침, 인후통, 경미한 발열을 포괄적으로 완화하는 복합 감기 캡슐.",
+    },
+    image:"https://placehold.co/110x150/dcfce7/14532d?text=ベンザブロックLP",
+    cautionFor:["hypertension","child"],
+    cautionDesc:{
+      en:"Caution with hypertension. Consult pharmacist for children under 15.",
+      zh:"高血压患者注意。15岁以下儿童请咨询药剂师。",
+      ko:"고혈압 주의. 15세 미만 어린이는 약사 상담 필요.",
+    },
+  },
+  bron_liquid: {
+    nameJa:"ブロン液",
+    name:{en:"Bron Cough Syrup",zh:"布朗止咳糖浆",ko:"브론 기침 시럽"},
+    desc:{
+      en:"Liquid cough medicine that suppresses persistent cough and helps loosen phlegm for easier breathing.",
+      zh:"液体止咳药，抑制持续性咳嗽并帮助稀释痰液，使呼吸更顺畅。",
+      ko:"지속적인 기침을 억제하고 가래를 녹여 호흡을 편안하게 해주는 시럽.",
+    },
+    image:"https://placehold.co/110x150/dcfce7/14532d?text=ブロン液",
+    cautionFor:["pregnancy"],
+    cautionDesc:{
+      en:"Consult pharmacist if pregnant.",
+      zh:"孕妇请咨询药剂师。",
+      ko:"임신 중이면 약사에게 상담하세요.",
+    },
+  },
+  stona_spray: {
+    nameJa:"ストナのどスプレーα",
+    name:{en:"Stona Throat Spray α",zh:"斯托纳咽喉喷雾α",ko:"스토나 목 스프레이α"},
+    desc:{
+      en:"Direct-spray antiseptic for fast relief from sore throat pain and inflammation.",
+      zh:"直接喷入咽喉，快速缓解喉咙痛和炎症。",
+      ko:"인후통·염증을 신속 완화하는 직접 분사형 방부 목 스프레이.",
+    },
+    image:"https://placehold.co/110x150/dcfce7/14532d?text=ストナSpray",
+    cautionFor:[],
+    cautionDesc:{en:"",zh:"",ko:""},
+  },
+  nodonuru: {
+    nameJa:"のどぬ〜るスプレー",
+    name:{en:"Nodo Nuru Throat Spray",zh:"喉舒适喷雾（日本知名品牌）",ko:"노도누루 목 스프레이"},
+    desc:{
+      en:"Antibacterial throat spray that soothes sore throat and prevents worsening. A household name in Japan.",
+      zh:"抗菌咽喉喷雾，缓解喉咙痛并防止病情加重，日本家喻户晓的品牌。",
+      ko:"인후통 완화 및 악화 예방을 위한 항균 목 스프레이. 일본의 대표적인 브랜드.",
+    },
+    image:"https://placehold.co/110x150/dcfce7/14532d?text=のどぬーる",
+    cautionFor:[],
+    cautionDesc:{en:"",zh:"",ko:""},
+  },
+  seirogan_sugar: {
+    nameJa:"正露丸糖衣A",
+    name:{en:"Seirogan Sugar-Coat A",zh:"正露丸糖衣A",ko:"세이로간 당의A"},
+    desc:{
+      en:"Classic Japanese stomach remedy. Odourless sugar-coated tablets for diarrhoea, stomach pain, and food poisoning.",
+      zh:"经典日本胃肠药，无气味糖衣片，适用于腹泻、胃痛和食物中毒。",
+      ko:"클래식 일본 위장약. 냄새 없는 당의정. 설사, 복통, 식중독에 사용.",
+    },
+    image:"https://placehold.co/110x150/fef9c3/92400e?text=正露丸糖衣A",
+    cautionFor:["pregnancy"],
+    cautionDesc:{
+      en:"Consult pharmacist if pregnant.",
+      zh:"孕妇请咨询药剂师。",
+      ko:"임신 중이면 약사에게 상담하세요.",
+    },
+  },
+  biofermin_s: {
+    nameJa:"ビオフェルミンS錠",
+    name:{en:"Biofermin S Tablets",zh:"比菲德S益生菌片",ko:"비오페르민S정"},
+    desc:{
+      en:"Probiotic that restores healthy gut flora and relieves diarrhoea, constipation, and stomach upset.",
+      zh:"益生菌片，恢复肠道健康菌群，缓解腹泻、便秘和胃肠不适。",
+      ko:"장내 건강한 균총 회복 프로바이오틱. 설사·변비·위장 불편 완화.",
+    },
+    image:"https://placehold.co/110x150/fef9c3/92400e?text=ビオフェルミンS",
+    cautionFor:[],
+    cautionDesc:{en:"",zh:"",ko:""},
+  },
+  buscopan: {
+    nameJa:"ブスコパン錠",
+    name:{en:"Buscopan",zh:"布斯科潘（丁溴东莨菪碱）",ko:"부스코판"},
+    desc:{
+      en:"Antispasmodic that quickly relieves stomach cramps, intestinal spasms, and abdominal pain.",
+      zh:"解痉药，快速缓解胃痉挛、肠道痉挛和腹痛。",
+      ko:"복부 경련, 장 경련, 복통을 빠르게 완화하는 진경제.",
+    },
+    image:"https://placehold.co/110x150/fef9c3/92400e?text=ブスコパン",
+    cautionFor:["pregnancy","hypertension"],
+    cautionDesc:{
+      en:"Consult pharmacist if pregnant or if you have glaucoma or prostate issues.",
+      zh:"孕妇、青光眼或前列腺问题患者请咨询药剂师。",
+      ko:"임신 중이거나 녹내장·전립선 문제가 있으면 약사에게 상담하세요.",
+    },
+  },
+  gaster_10: {
+    nameJa:"ガスター10",
+    name:{en:"Gaster 10 (Famotidine)",zh:"盖世特10（法莫替丁）",ko:"가스터10 (파모티딘)"},
+    desc:{
+      en:"H2 blocker that quickly suppresses excess stomach acid. Effective for heartburn and acid reflux.",
+      zh:"H2受体阻断剂，快速抑制过多胃酸，有效缓解烧心和胃酸反流。",
+      ko:"과도한 위산을 빠르게 억제하는 H2 차단제. 가슴쓰림·역류에 효과적.",
+    },
+    image:"https://placehold.co/110x150/fef9c3/92400e?text=ガスター10",
+    cautionFor:[],
+    cautionDesc:{en:"",zh:"",ko:""},
+  },
+  cabujin: {
+    nameJa:"キャベジンコーワα",
+    name:{en:"Cabujin Kowa α",zh:"卷心菜精华胃药α",ko:"캐버진 코와α"},
+    desc:{
+      en:"Traditional Japanese stomach medicine with vitamin U (cabbage extract). Relieves heartburn, stomach discomfort, and indigestion.",
+      zh:"含维生素U（卷心菜提取物）的传统日本胃药，缓解烧心、胃部不适和消化不良。",
+      ko:"비타민U(양배추 추출물) 함유 전통 일본 위장약. 가슴쓰림·위 불편·소화불량 완화.",
+    },
+    image:"https://placehold.co/110x150/fef9c3/92400e?text=キャベジンα",
+    cautionFor:[],
+    cautionDesc:{en:"",zh:"",ko:""},
+  },
+  allegra_fx: {
+    nameJa:"アレグラFX",
+    name:{en:"Allegra FX (Fexofenadine)",zh:"阿乐加FX（非索非那定）",ko:"알레그라FX (페소페나딘)"},
+    desc:{
+      en:"Non-drowsy antihistamine for hay fever and seasonal allergies. Twice daily. Does not affect driving ability.",
+      zh:"用于花粉症和季节性过敏的无嗜睡抗组胺药，每日两次，不影响驾驶。",
+      ko:"꽃가루 알레르기와 계절성 알레르기를 위한 졸음 없는 항히스타민제. 하루 2회.",
+    },
+    image:"https://placehold.co/110x150/fce7f3/9d174d?text=アレグラFX",
+    cautionFor:["child"],
+    cautionDesc:{
+      en:"Not recommended for children under 15 without pharmacist guidance.",
+      zh:"15岁以下儿童需在药剂师指导下使用。",
+      ko:"약사 지도 없이 15세 미만 어린이에게는 권장하지 않습니다.",
+    },
+  },
+  claritin_ex: {
+    nameJa:"クラリチンEX",
+    name:{en:"Claritin EX (Loratadine)",zh:"克拉利汀EX（氯雷他定）",ko:"클라리틴EX (로라타딘)"},
+    desc:{
+      en:"Once-daily non-drowsy antihistamine for 24-hour allergy and hay fever relief.",
+      zh:"每日一次的无嗜睡抗组胺药，24小时持续缓解过敏和花粉症。",
+      ko:"24시간 알레르기·꽃가루 알레르기 완화를 위한 1일 1회 졸음 없는 항히스타민제.",
+    },
+    image:"https://placehold.co/110x150/fce7f3/9d174d?text=クラリチンEX",
+    cautionFor:["child"],
+    cautionDesc:{
+      en:"Consult pharmacist for children under 15.",
+      zh:"15岁以下儿童请咨询药剂师。",
+      ko:"15세 미만 어린이는 약사에게 상담하세요.",
+    },
+  },
+  muhi_s: {
+    nameJa:"ムヒS軟膏",
+    name:{en:"Muhi-S Ointment",zh:"无比滴S软膏",ko:"무히S 연고"},
+    desc:{
+      en:"Japan's most popular topical cream for skin itching, rash, insect bites, and mild eczema.",
+      zh:"日本最受欢迎的皮肤外用药，适用于皮肤瘙痒、皮疹、虫咬和轻度湿疹。",
+      ko:"피부 가려움, 발진, 벌레 물림, 경미한 습진을 위한 일본의 가장 인기 있는 외용 크림.",
+    },
+    image:"https://placehold.co/110x150/fce7f3/9d174d?text=ムヒS",
+    cautionFor:["child","pregnancy"],
+    cautionDesc:{
+      en:"Consult pharmacist if pregnant or applying to young children.",
+      zh:"孕妇或幼儿使用前请咨询药剂师。",
+      ko:"임신 중이거나 어린이에게 사용 시 약사에게 상담하세요.",
+    },
+  },
+  restamin: {
+    nameJa:"レスタミンコーワ軟膏",
+    name:{en:"Restamin Kowa Ointment",zh:"瑞丝塔明考华软膏",ko:"레스타민 코와 연고"},
+    desc:{
+      en:"Antihistamine topical ointment for skin itching, hives, rash, and insect bites.",
+      zh:"抗组胺外用软膏，适用于皮肤瘙痒、荨麻疹、皮疹和虫咬。",
+      ko:"피부 가려움, 두드러기, 발진, 벌레 물림을 위한 항히스타민 외용 연고.",
+    },
+    image:"https://placehold.co/110x150/fce7f3/9d174d?text=レスタミン",
+    cautionFor:["child","pregnancy"],
+    cautionDesc:{
+      en:"Consult pharmacist if pregnant or applying to young children.",
+      zh:"孕妇或幼儿使用前请咨询药剂师。",
+      ko:"임신 중이거나 어린이에게 사용 시 약사에게 상담하세요.",
+    },
+  },
+  rohto_cool: {
+    nameJa:"ロート目薬40α",
+    name:{en:"Rohto Eye Drops 40α",zh:"乐敦清凉眼药水40α",ko:"로토 안약40α"},
+    desc:{
+      en:"Refreshing cooling eye drops for redness, eye fatigue, and itching. Iconic Japanese eye drop brand.",
+      zh:"清凉提神眼药水，缓解眼红、眼睛疲劳和瘙痒，日本标志性眼药水品牌。",
+      ko:"충혈, 눈 피로, 가려움을 위한 상쾌한 쿨링 안약. 일본의 아이코닉한 안약 브랜드.",
+    },
+    image:"https://placehold.co/110x150/e0f2fe/0c4a6e?text=ロート目薬40α",
+    cautionFor:[],
+    cautionDesc:{en:"",zh:"",ko:""},
+  },
+  sante_fx: {
+    nameJa:"サンテFX V+",
+    name:{en:"Sante FX V+",zh:"参天FX V+眼药水",ko:"산테FX V+ 안약"},
+    desc:{
+      en:"Vitamin-enriched eye drops for tired, irritated eyes and contact lens users.",
+      zh:"富含维生素的眼药水，适合眼睛疲劳、刺激和隐形眼镜佩戴者。",
+      ko:"눈 피로, 자극, 콘택트렌즈 착용자를 위한 비타민 강화 안약.",
+    },
+    image:"https://placehold.co/110x150/e0f2fe/0c4a6e?text=サンテFX+V%2B",
+    cautionFor:[],
+    cautionDesc:{en:"",zh:"",ko:""},
+  },
+  salonpas: {
+    nameJa:"サロンパス",
+    name:{en:"Salonpas Patches",zh:"撒隆巴斯贴片",ko:"사론파스 패치"},
+    desc:{
+      en:"Medicated adhesive patches applied directly to skin. Effective for muscle pain, stiff shoulders, and back pain.",
+      zh:"直接贴于皮肤的药用贴片，有效缓解肌肉疼痛、肩膀酸痛和腰痛。",
+      ko:"피부에 직접 붙이는 의약 부착 패치. 근육통, 어깨 결림, 허리 통증에 효과적.",
+    },
+    image:"https://placehold.co/110x150/f3e8ff/6b21a8?text=サロンパス",
+    cautionFor:["pregnancy"],
+    cautionDesc:{
+      en:"Consult pharmacist if pregnant.",
+      zh:"孕妇请咨询药剂师。",
+      ko:"임신 중이면 약사에게 상담하세요.",
+    },
+  },
+  feitas_gel: {
+    nameJa:"フェイタスZαゲル",
+    name:{en:"Feitas Zα Gel",zh:"菲塔斯Zα消炎凝胶",ko:"페이타스Zα 젤"},
+    desc:{
+      en:"Anti-inflammatory NSAID gel for joint pain, sports injuries, and chronic muscle aches.",
+      zh:"非甾体消炎凝胶，对关节疼痛、运动损伤和慢性肌肉酸痛有效。",
+      ko:"관절통, 스포츠 부상, 만성 근육통을 위한 항염 NSAIDs 젤.",
+    },
+    image:"https://placehold.co/110x150/f3e8ff/6b21a8?text=フェイタスZα",
+    cautionFor:["pregnancy","kidney"],
+    cautionDesc:{
+      en:"Avoid if pregnant or have kidney disease.",
+      zh:"孕妇或肾病患者请避免使用。",
+      ko:"임신 중이거나 신장 질환이 있으면 피하세요.",
+    },
+  },
+  eve_a: {
+    nameJa:"イブA錠",
+    name:{en:"Eve A Tablets (Ibuprofen)",zh:"伊芙A片（布洛芬）",ko:"이브A정 (이부프로펜)"},
+    desc:{
+      en:"Ibuprofen-based pain reliever especially effective for menstrual cramps and headaches.",
+      zh:"布洛芬类镇痛药，对生理痛和头痛特别有效。",
+      ko:"생리통과 두통에 특히 효과적인 이부프로펜 기반 진통제.",
+    },
+    image:"https://placehold.co/110x150/fce7f3/9d174d?text=イブA錠",
+    cautionFor:["pregnancy"],
+    cautionDesc:{
+      en:"Avoid during pregnancy, especially in the 3rd trimester.",
+      zh:"孕妇禁用，尤其是妊娠晚期。",
+      ko:"임신 중 사용 금지. 특히 임신 3기에는 절대 사용하지 마세요.",
+    },
+  },
+  naron_ace: {
+    nameJa:"ナロンエースT",
+    name:{en:"Naron Ace T",zh:"纳龙艾斯T",ko:"나론 에이스T"},
+    desc:{
+      en:"Fast-acting tablets for menstrual pain, headache, and general pain. Contains ibuprofen.",
+      zh:"速效镇痛片，适用于生理痛、头痛和一般疼痛，含布洛芬成分。",
+      ko:"생리통, 두통, 일반 통증을 위한 빠른 효과 정제. 이부프로펜 함유.",
+    },
+    image:"https://placehold.co/110x150/fce7f3/9d174d?text=ナロンエースT",
+    cautionFor:["pregnancy"],
+    cautionDesc:{
+      en:"Avoid during pregnancy.",
+      zh:"孕妇禁用。",
+      ko:"임신 중 사용 금지.",
+    },
+  },
+};
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//
+//   APPLICATION CODE  ／  アプリケーションコード
+//   ─────────────────────────────────────────────────────────────────────
+//   ロジック変更以外は編集不要
+//
+// ══════════════════════════════════════════════════════════════════════════
+
+// ── State ─────────────────────────────────────────────────────────────────
+const state = {
+  lang:         "en",
+  screen:       "lang", // lang | screening | symptoms | result | emergency
+  rfChecked:    new Set(),  // checked red-flag indices
+  bgChecked:    new Set(),  // checked background condition indices
+  // symptomPath: [{fromNodeId, questionJa, chosenLabel, chosenLabelJa}, …]
+  symptomPath:  [],
+  currentNodeId:"root",
+  resultNodeId: null,
+};
+// Option cache — populated on each renderSymptoms call for index-based onclick
+let _opts = [];
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+const t  = k   => UI[state.lang]?.[k]  ?? UI.en[k]  ?? k;
+const tA = k   => UI[state.lang]?.[k]  ?? UI.en[k]  ?? [];
+const tx = obj => obj?.[state.lang]    ?? obj?.en    ?? "";
+
+function activeConds() {
+  const s = new Set();
+  state.bgChecked.forEach(i => { if (BG_KEYS[i]) s.add(BG_KEYS[i]); });
+  return s;
+}
+function prodHasCaution(pid) {
+  const p = PRODUCTS[pid]; if (!p) return false;
+  const ac = activeConds();
+  return p.cautionFor.some(c => ac.has(c));
+}
+function anyHasCaution(pids) { return pids.some(p => prodHasCaution(p)); }
+// Diabetes (idx 3) and drug allergy (idx 4) always trigger pharmacist consult
+function alwaysConsult() { return state.bgChecked.has(3) || state.bgChecked.has(4); }
+
+// ── Master render ─────────────────────────────────────────────────────────
+function render() {
+  const fns = {
+    lang:      renderLang,
+    screening: renderScreening,
+    symptoms:  renderSymptoms,
+    result:    renderResult,
+    emergency: renderEmergency,
+  };
+  document.getElementById("app").innerHTML = (fns[state.screen] || renderLang)();
+  window.scrollTo(0, 0);
+}
+
+// ── Shared header ─────────────────────────────────────────────────────────
+// NOTE: hdr() is always no-print so navigation UI disappears on print.
+function hdr(title, backFn) {
+  return `
+<div class="bg-white shadow-sm sticky top-0 z-20 no-print">
+  <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-2">
+    <button onclick="${backFn}"
+            class="tap text-blue-600 font-semibold text-sm flex-shrink-0 px-2 py-1 rounded-lg hover:bg-blue-50">
+      ${t("backBtn")}
+    </button>
+    <div class="flex-1 text-center">
+      <div class="text-xs text-slate-400 font-bold uppercase tracking-widest leading-none">OTC Guide</div>
+      <div class="text-sm font-bold text-slate-700 mt-0.5">${title}</div>
+    </div>
+    <button onclick="goLang()"
+            class="tap text-slate-400 text-xs px-2 py-1 rounded-lg hover:bg-slate-50" title="Restart / 最初から">
+      🔄
+    </button>
+  </div>
+</div>`;
+}
+
+// ── SCREEN: Language ──────────────────────────────────────────────────────
+function renderLang() {
+  return `
+<div class="screen min-h-screen flex flex-col items-center justify-center px-5 py-12
+            bg-gradient-to-b from-sky-50 via-blue-50 to-indigo-50">
+  <div class="text-center mb-10">
+    <div class="text-7xl mb-5 drop-shadow-sm">💊</div>
+    <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">OTC Pharmacy Guide</h1>
+    <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+      OTC医薬品案内 &nbsp;·&nbsp; 非处方药指南 &nbsp;·&nbsp; OTC 의약품 안내
+    </p>
+  </div>
+
+  <div class="w-full max-w-sm space-y-3">
+    <p class="text-center text-slate-500 text-sm mb-2">${t("langPrompt")}</p>
+
+    <button onclick="selectLang('en')"
+            class="tap w-full bg-white border-2 border-blue-200 hover:border-blue-500
+                   rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
+      <span class="text-3xl">🇺🇸</span>
+      <div class="text-left flex-1">
+        <div class="font-bold text-slate-800 text-lg">English</div>
+        <div class="text-slate-400 text-xs">English</div>
+      </div>
+      <span class="text-blue-300 text-xl font-light">›</span>
+    </button>
+
+    <button onclick="selectLang('zh')"
+            class="tap w-full bg-white border-2 border-red-200 hover:border-red-500
+                   rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
+      <span class="text-3xl">🇨🇳</span>
+      <div class="text-left flex-1">
+        <div class="font-bold text-slate-800 text-lg">中文（简体）</div>
+        <div class="text-slate-400 text-xs">Chinese (Simplified)</div>
+      </div>
+      <span class="text-red-300 text-xl font-light">›</span>
+    </button>
+
+    <button onclick="selectLang('ko')"
+            class="tap w-full bg-white border-2 border-indigo-200 hover:border-indigo-500
+                   rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
+      <span class="text-3xl">🇰🇷</span>
+      <div class="text-left flex-1">
+        <div class="font-bold text-slate-800 text-lg">한국어</div>
+        <div class="text-slate-400 text-xs">Korean</div>
+      </div>
+      <span class="text-indigo-300 text-xl font-light">›</span>
+    </button>
+  </div>
+
+  <p class="mt-10 text-xs text-slate-400 text-center max-w-xs leading-relaxed">
+    This tool helps find suitable OTC medicine. Always consult a pharmacist if uncertain.<br>
+    <span class="text-slate-300">不明な点は薬剤師にご相談ください。</span>
+  </p>
+</div>`;
+}
+
+// ── SCREEN: Screening ─────────────────────────────────────────────────────
+function renderScreening() {
+  const rfItems = tA("rfItems");
+  const bgItems = tA("bgItems");
+
+  const rfRows = rfItems.map((item, i) => {
+    const checked = state.rfChecked.has(i);
+    return `
+<label class="chk-label flex items-start gap-3 p-3.5 rounded-xl transition-colors
+              ${checked ? "bg-red-50" : "hover:bg-slate-50"}">
+  <input type="checkbox" onchange="toggleRF(${i})" ${checked ? "checked" : ""}
+         class="mt-0.5 w-5 h-5 flex-shrink-0 accent-red-500 cursor-pointer">
+  <span class="text-sm text-slate-700 leading-snug">${item}</span>
+</label>`;
+  }).join("");
+
+  const bgRows = bgItems.map((item, i) => {
+    const checked = state.bgChecked.has(i);
+    return `
+<label class="chk-label flex items-start gap-3 p-3.5 rounded-xl transition-colors
+              ${checked ? "bg-amber-50" : "hover:bg-slate-50"}">
+  <input type="checkbox" onchange="toggleBG(${i})" ${checked ? "checked" : ""}
+         class="mt-0.5 w-5 h-5 flex-shrink-0 accent-amber-500 cursor-pointer">
+  <span class="text-sm text-slate-700 leading-snug">${item}</span>
+</label>`;
+  }).join("");
+
+  return `
+<div class="screen min-h-screen bg-slate-50">
+  ${hdr(t("scrTitle"), "goLang()")}
+  <div class="max-w-lg mx-auto px-4 py-5 space-y-5">
+    <p class="text-sm text-slate-500 text-center leading-relaxed">${t("scrSub")}</p>
+
+    <!-- Red Flag Section -->
+    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div class="bg-red-50 px-4 py-3.5 border-b border-red-100">
+        <div class="font-bold text-red-700 text-sm leading-snug">${t("rfTitle")}</div>
+        <div class="text-red-500 text-xs mt-1 leading-snug">${t("rfNote")}</div>
+      </div>
+      <div class="p-2 space-y-0.5">${rfRows}</div>
+    </div>
+
+    <!-- Background Section -->
+    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div class="bg-amber-50 px-4 py-3.5 border-b border-amber-100">
+        <div class="font-bold text-amber-700 text-sm">${t("bgTitle")}</div>
+      </div>
+      <div class="p-2 space-y-0.5">${bgRows}</div>
+    </div>
+
+    <button onclick="nextFromScreening()"
+            class="tap w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800
+                   text-white font-bold py-4 rounded-2xl shadow-md text-lg transition-colors">
+      ${t("nextBtn")}
+    </button>
+  </div>
+</div>`;
+}
+
+// ── SCREEN: Symptoms ──────────────────────────────────────────────────────
+function renderSymptoms() {
+  const node = SYMPTOM_NODES[state.currentNodeId];
+  if (!node) return `<div class="p-12 text-center text-slate-400">Node not found.</div>`;
+  _opts = node.options;
+
+  const crumbs = state.symptomPath.length
+    ? `<div class="flex flex-wrap items-center gap-1.5 mb-4 px-1">
+        ${state.symptomPath.map((s, i) =>
+          (i > 0 ? `<span class="text-slate-300 text-xs">›</span>` : "") +
+          `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">${s.chosenLabel}</span>`
+        ).join("")}
+      </div>`
+    : "";
+
+  const optBtns = node.options.map((opt, i) => `
+<button onclick="pickOption(${i})"
+        class="tap w-full bg-white border-2 border-slate-100 hover:border-blue-300 hover:bg-blue-50
+               rounded-2xl p-4 text-left shadow-sm transition-all flex items-center gap-3 group">
+  <span class="flex-1">
+    <span class="block text-slate-800 font-medium text-sm leading-snug">${tx(opt.label)}</span>
+    <span class="block text-slate-400 text-xs mt-0.5">${opt.labelJa}</span>
+  </span>
+  <span class="text-blue-300 group-hover:text-blue-500 text-xl transition-colors flex-shrink-0">›</span>
+</button>`).join("");
+
+  return `
+<div class="screen min-h-screen bg-slate-50">
+  ${hdr(t("sympTitle"), state.symptomPath.length > 0 ? "goBack()" : "goScreening()")}
+  <div class="max-w-lg mx-auto px-4 py-5">
+    ${crumbs}
+    <div class="bg-white rounded-2xl shadow-sm p-5 mb-4">
+      <div class="text-4xl mb-3">${node.icon || "💬"}</div>
+      <h2 class="text-xl font-bold text-slate-800 leading-snug">${tx(node.question)}</h2>
+      <p class="text-xs text-slate-400 mt-2 font-medium">${node.questionJa}</p>
+    </div>
+    <div class="space-y-2.5">${optBtns}</div>
+  </div>
+</div>`;
+}
+
+// ── SCREEN: Result ────────────────────────────────────────────────────────
+function renderResult() {
+  const rNode = RESULT_NODES[state.resultNodeId];
+  if (!rNode) return `<div class="p-12 text-center text-slate-400">Error: result not found.</div>`;
+
+  const pids           = rNode.products;
+  const showPharmAlert = anyHasCaution(pids) || alwaysConsult();
+
+  // ── Product Cards
+  const cards = pids.map((pid, idx) => {
+    const p = PRODUCTS[pid]; if (!p) return "";
+    const isPrimary   = idx === 0;
+    const hasCaution  = prodHasCaution(pid);
+    const imgSrc      = p.image || `https://placehold.co/110x150/e2e8f0/94a3b8?text=No+Image`;
+    const badgeClass  = isPrimary
+      ? "bg-blue-600 text-white text-xs font-bold px-4 py-1.5 text-center tracking-wide"
+      : "bg-slate-100 text-slate-500 text-xs font-semibold px-4 py-1 text-center tracking-widest";
+    const borderClass = isPrimary
+      ? "border-2 border-blue-200"
+      : "border border-slate-100";
+    return `
+<div class="product-card bg-white rounded-2xl shadow-sm overflow-hidden ${borderClass}">
+  <div class="${badgeClass}">${isPrimary ? t("resPrimaryBadge") : t("resAltBadge")}</div>
+  <div class="flex p-4 gap-4">
+    <div class="flex-shrink-0">
+      <img src="${imgSrc}" alt="${p.nameJa}"
+           onerror="this.src='https://placehold.co/96x128/e2e8f0/94a3b8?text=No+Image'"
+           class="w-24 h-32 object-contain rounded-xl bg-slate-50 border border-slate-100">
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-0.5">日本語名</div>
+      <h3 class="text-2xl font-extrabold text-slate-900 leading-tight">${p.nameJa}</h3>
+      <h4 class="text-sm font-bold text-blue-600 mt-0.5 mb-2.5">${tx(p.name)}</h4>
+      <p class="text-xs text-slate-600 leading-relaxed">${tx(p.desc)}</p>
+    </div>
+  </div>
+  ${hasCaution && tx(p.cautionDesc) ? `
+  <div class="mx-4 mb-4 bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2 items-start">
+    <span class="flex-shrink-0 text-base">⚠️</span>
+    <p class="text-xs text-amber-800 leading-snug">
+      <strong>${t("resCautionLabel")}:</strong> ${tx(p.cautionDesc)}
+    </p>
+  </div>` : ""}
+</div>`;
+  }).join("");
+
+  // ── User-language symptom path summary
+  const pathRows = state.symptomPath.map(s =>
+    `<div class="flex items-start gap-2 text-sm">
+      <span class="text-blue-400 font-bold flex-shrink-0 mt-px">›</span>
+      <span class="text-slate-700 leading-snug">${s.chosenLabel}</span>
+    </div>`
+  ).join("");
+
+  // ── Staff section: Japanese
+  const staffPath = state.symptomPath.map(s =>
+    `<div class="flex items-start gap-2">
+      <span class="text-blue-500 font-extrabold flex-shrink-0 mt-px">›</span>
+      <div class="text-sm leading-snug">
+        <span class="font-bold text-slate-900">${s.chosenLabelJa}</span>
+        <span class="text-slate-400 text-xs ml-2">(${s.chosenLabel})</span>
+      </div>
+    </div>`
+  ).join("");
+
+  const staffProds = pids.map(pid => {
+    const p = PRODUCTS[pid]; if (!p) return "";
+    return `<span class="inline-block bg-blue-100 text-blue-800 font-extrabold text-base
+                         px-3.5 py-1.5 rounded-xl mr-2 mb-2">${p.nameJa}</span>`;
+  }).join("");
+
+  const bgLabels = [...state.bgChecked].map(i => BG_JA[i]).filter(Boolean);
+  const staffConds = bgLabels.length
+    ? `<div class="pt-3 mt-3 border-t border-slate-200">
+        <div class="text-xs font-extrabold text-slate-500 uppercase tracking-wide mb-2">
+          ${t("resCondJaLabel")}
+        </div>
+        <div>${bgLabels.map(l =>
+          `<span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold
+                        px-2.5 py-1 rounded-lg mr-1 mb-1">${l}</span>`
+        ).join("")}</div>
+      </div>`
+    : "";
+
+  return `
+<div class="screen min-h-screen bg-slate-50">
+  ${hdr(t("resTitle"), "goBack()")}
+  <div class="max-w-lg mx-auto px-4 py-5 space-y-4">
+
+    <!-- Pharmacist alert banner -->
+    ${showPharmAlert ? `
+    <div class="bg-red-50 border-2 border-red-300 rounded-2xl p-4 flex gap-3 items-start">
+      <span class="text-2xl flex-shrink-0">⚠️</span>
+      <div>
+        <div class="font-bold text-red-700 text-sm">${t("resAlertTitle")}</div>
+        <div class="text-red-600 text-xs mt-1 leading-snug">${t("resAlertBody")}</div>
+      </div>
+    </div>` : ""}
+
+    <!-- Symptom path (selected language) -->
+    <div class="bg-white rounded-2xl shadow-sm p-4">
+      <div class="text-xs font-extrabold text-slate-500 uppercase tracking-widest mb-3">
+        ${t("resPathLabel")}
+      </div>
+      <div class="space-y-2">${pathRows}</div>
+    </div>
+
+    <!-- Product cards -->
+    <div class="space-y-3">${cards}</div>
+
+    <!-- Perforated divider (✂) -->
+    <div class="tear">
+      <span class="tear-label">✂ For Pharmacy Staff ／ スタッフ用 ✂</span>
+    </div>
+
+    <!-- Staff zone: shown on screen AND on print -->
+    <div class="staff-zone">
+      <div class="flex items-center gap-2 mb-1">
+        <h3 class="font-extrabold text-slate-700 text-sm">${t("resStaffTitle")}</h3>
+      </div>
+      <p class="text-xs text-slate-500 italic mb-4">${t("resStaffNote")}</p>
+
+      <!-- Symptom path (Japanese) -->
+      <div class="mb-3">
+        <div class="text-xs font-extrabold text-slate-500 uppercase tracking-wide mb-2">
+          ${t("resPathJaLabel")}
+        </div>
+        <div class="space-y-1.5">${staffPath}</div>
+      </div>
+
+      <!-- Recommended products (Japanese) -->
+      <div class="pt-3 border-t border-slate-200 mb-2">
+        <div class="text-xs font-extrabold text-slate-500 uppercase tracking-wide mb-2">
+          ${t("resProdJaLabel")}
+        </div>
+        <div>${staffProds}</div>
+      </div>
+
+      <!-- Disclosed background conditions (Japanese) -->
+      ${staffConds}
+
+      <!-- Pharmacist consult badge -->
+      ${showPharmAlert ? `
+      <div class="pt-3 mt-1 border-t border-slate-200">
+        <span class="inline-flex items-center gap-1.5 bg-red-100 text-red-700
+                     text-xs font-extrabold px-3 py-2 rounded-xl">
+          ⚠️ ${t("resConsultBadge")}
+        </span>
+      </div>` : ""}
+    </div>
+
+    <!-- Action buttons (hidden on print) -->
+    <div class="flex gap-3 pb-8 no-print">
+      <button onclick="window.print()"
+              class="tap flex-1 bg-white border-2 border-slate-200 text-slate-600
+                     font-semibold py-3 rounded-xl text-sm hover:bg-slate-50 transition-all">
+        ${t("resPrintBtn")}
+      </button>
+      <button onclick="goLang()"
+              class="tap flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl text-sm
+                     shadow-md hover:bg-blue-700 transition-colors">
+        ${t("restartBtn")}
+      </button>
+    </div>
+  </div>
+</div>`;
+}
+
+// ── SCREEN: Emergency ─────────────────────────────────────────────────────
+function renderEmergency() {
+  const emLang = (flag, label, msg) =>
+    `<div class="p-4 border-b border-slate-100 last:border-b-0">
+      <div class="text-xs font-bold text-slate-500 mb-1">${flag} ${label}</div>
+      <p class="text-sm text-slate-700 leading-snug">${msg}</p>
+    </div>`;
+
+  return `
+<div class="screen min-h-screen">
+  <!-- Emergency header -->
+  <div class="bg-red-600 text-white text-center py-8 px-4">
+    <div class="text-6xl mb-3">🚨</div>
+    <h1 class="text-xl font-extrabold leading-snug">${t("emTitle")}</h1>
+  </div>
+
+  <div class="max-w-lg mx-auto px-4 py-5 space-y-4">
+    <!-- Main message -->
+    <div class="em-pulse rounded-2xl border-2 border-red-200 p-5">
+      <p class="text-red-700 font-bold text-base leading-relaxed mb-2">${t("emMsg")}</p>
+      <p class="text-red-600 text-sm leading-snug">${t("emAction")}</p>
+      <div class="mt-4 bg-red-600 text-white text-center font-extrabold text-2xl
+                  py-3.5 rounded-xl shadow-lg tracking-wide">
+        ${t("emNum")}
+      </div>
+    </div>
+
+    <!-- Multilingual notice panel -->
+    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+      ${emLang("🇺🇸","English",
+        "Please call 119 (ambulance) or go to the nearest hospital immediately. Do NOT take any OTC medicine.")}
+      ${emLang("🇨🇳","中文",
+        "请立即拨打119（救护车）或前往最近的医院。请勿服用任何非处方药物。")}
+      ${emLang("🇰🇷","한국어",
+        "즉시 119(구급차)에 전화하거나 가장 가까운 병원으로 가세요. 어떤 OTC 약도 복용하지 마세요.")}
+      <div class="p-4 bg-slate-50">
+        <div class="text-xs font-bold text-slate-600 mb-1">🇯🇵 スタッフへ（For Staff）</div>
+        <p class="text-sm text-slate-800 font-semibold leading-relaxed">${t("emStaff")}</p>
+      </div>
+    </div>
+
+    <button onclick="goLang()"
+            class="tap no-print w-full bg-slate-700 text-white font-bold py-4 rounded-2xl
+                   text-sm shadow-md hover:bg-slate-800 transition-colors">
+      ${t("restartBtn")}
+    </button>
+  </div>
+</div>`;
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//  EVENT HANDLERS  (called from onclick="…" attributes in the HTML)
+// ══════════════════════════════════════════════════════════════════════════
+
+function selectLang(lang) {
+  Object.assign(state, {
+    lang, screen:"screening",
+    rfChecked: new Set(), bgChecked: new Set(),
+    symptomPath:[], currentNodeId:"root", resultNodeId:null,
+  });
+  render();
+}
+
+function toggleRF(i) {
+  state.rfChecked.has(i) ? state.rfChecked.delete(i) : state.rfChecked.add(i);
+  render();
+}
+function toggleBG(i) {
+  state.bgChecked.has(i) ? state.bgChecked.delete(i) : state.bgChecked.add(i);
+  render();
+}
+
+function nextFromScreening() {
+  state.screen = state.rfChecked.size > 0 ? "emergency" : "symptoms";
+  if (state.screen === "symptoms") {
+    state.currentNodeId = "root";
+    state.symptomPath   = [];
+  }
+  render();
+}
+
+function pickOption(idx) {
+  const opt  = _opts[idx]; if (!opt) return;
+  const node = SYMPTOM_NODES[state.currentNodeId];
+  state.symptomPath.push({
+    fromNodeId:    state.currentNodeId,
+    questionJa:    node?.questionJa || "",
+    chosenLabel:   tx(opt.label),
+    chosenLabelJa: opt.labelJa,
+  });
+  if      (RESULT_NODES[opt.next])  { state.resultNodeId = opt.next; state.screen = "result"; }
+  else if (SYMPTOM_NODES[opt.next]) { state.currentNodeId = opt.next; }
+  else { console.warn("Unknown node:", opt.next); }
+  render();
+}
+
+function goBack() {
+  if (state.screen === "result") {
+    const last = state.symptomPath.pop();
+    state.currentNodeId = last?.fromNodeId || "root";
+    state.resultNodeId  = null;
+    state.screen        = "symptoms";
+  } else if (state.screen === "symptoms") {
+    if (state.symptomPath.length === 0) {
+      state.screen = "screening";
+    } else {
+      const last = state.symptomPath.pop();
+      state.currentNodeId = last?.fromNodeId || "root";
+    }
+  }
+  render();
+}
+
+function goScreening() { state.screen = "screening"; render(); }
+
+function goLang() {
+  Object.assign(state, {
+    lang:"en", screen:"lang",
+    rfChecked: new Set(), bgChecked: new Set(),
+    symptomPath:[], currentNodeId:"root", resultNodeId:null,
+  });
+  render();
+}
+
+// ── Initialise ────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
