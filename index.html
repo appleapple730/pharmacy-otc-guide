@@ -281,22 +281,33 @@ const SYMPTOM_NODES = {
     questionJa: "主な症状を選んでください",
     icon: "🩺",
     options: [
-      { label:{en:"🤕  Headache / Body pain",      zh:"🤕  头痛 / 身体疼痛",        ko:"🤕  두통 / 몸 통증"},
-        labelJa:"頭痛・身体の痛み",           next:"headache_q1" },
-      { label:{en:"🤧  Cold / Flu symptoms",        zh:"🤧  感冒 / 流感症状",         ko:"🤧  감기 / 독감 증상"},
-        labelJa:"風邪・インフルエンザ症状",    next:"cold_q1" },
-      { label:{en:"🤢  Stomach / Digestive trouble",zh:"🤢  胃肠问题",               ko:"🤢  소화기 문제"},
-        labelJa:"胃腸・消化器症状",           next:"stomach_q1" },
-      { label:{en:"🌸  Allergy symptoms",           zh:"🌸  过敏症状",               ko:"🌸  알레르기 증상"},
-        labelJa:"アレルギー症状",             next:"allergy_q1" },
-      { label:{en:"👁️  Eye irritation / Redness",  zh:"👁️  眼部不适 / 眼红",       ko:"👁️  눈 충혈 / 불편"},
-        labelJa:"目の症状（充血・かゆみ・疲れ目）", next:"result_eye" },
-      { label:{en:"💪  Muscle / Joint pain",        zh:"💪  肌肉 / 关节疼痛",        ko:"💪  근육 / 관절 통증"},
-        labelJa:"筋肉・関節の痛み",           next:"result_muscle" },
-      { label:{en:"🌙  Menstrual pain",             zh:"🌙  生理痛",                 ko:"🌙  생리통"},
-        labelJa:"生理痛",                     next:"result_menstrual" },
+      { label: { en: "🤕  Headache / Body pain",            zh: "🤕  头痛 / 身体疼痛",          ko: "🤕  두통 / 몸 통증" },
+        labelJa: "頭痛・身体の痛み",          next: "headache_q1" },
+      { label: { en: "🤧  Cold / Flu symptoms",             zh: "🤧  感冒 / 流感症状",           ko: "🤧  감기 / 독감 증상" },
+        labelJa: "風邪・インフルエンザ症状",   next: "cold_q1" },
+      { label: { en: "🤢  Stomach / Digestive trouble",     zh: "🤢  胃肠问题",                 ko: "🤢  소화기 문제" },
+        labelJa: "胃腸・消化器症状",          next: "stomach_q1" },
+      { label: { en: "🌸  Allergy symptoms",                zh: "🌸  过敏症状",                 ko: "🌸  알레르기 증상" },
+        labelJa: "アレルギー症状",            next: "allergy_q1" },
+      { label: { en: "👁️  Eye irritation / Redness",       zh: "👁️  眼部不适 / 眼红",         ko: "👁️  눈 충혈 / 불편" },
+        labelJa: "目の症状（充血・かゆみ・疲れ目）", next: "result_eye" },
+      { label: { en: "💪  Muscle pain / Stiff shoulders",   zh: "💪  肌肉痛 / 肩膀僵硬",       ko: "💪  근육통 / 어깨 결림" },
+        labelJa: "筋肉痛・肩こり・腰痛",     next: "result_muscle" },
+      { label: { en: "🌙  Women's health",                  zh: "🌙  女性健康",                 ko: "🌙  여성 건강" },
+        labelJa: "女性の健康（生理・膣トラブル）", next: "womens_q1" },
+      { label: { en: "🚗  Motion sickness",                 zh: "🚗  晕车 / 晕船 / 晕机",       ko: "🚗  멀미" },
+        labelJa: "乗り物酔い",               next: "result_motion" },
+      { label: { en: "🦟  Insect bites / Skin itching",     zh: "🦟  虫咬 / 皮肤瘙痒",         ko: "🦟  벌레 물림 / 피부 가려움" },
+        labelJa: "虫刺され・皮膚のかゆみ",   next: "result_insect" },
+      { label: { en: "🩹  Minor cuts / Wounds / Antiseptic",zh: "🩹  小伤口 / 消毒",           ko: "🩹  작은 상처 / 소독" },
+        labelJa: "切り傷・擦り傷・消毒",     next: "result_wound" },
+      { label: { en: "🦷  Mouth ulcer (canker sore)",       zh: "🦷  口腔溃疡",                ko: "🦷  구내염" },
+        labelJa: "口内炎",                   next: "result_mouth" },
+      { label: { en: "💧  Dehydration / Heat exhaustion",   zh: "💧  脱水 / 中暑补液",         ko: "💧  탈수 / 수분 보충" },
+        labelJa: "脱水・水分補給",           next: "result_hydration" },
     ],
   },
+
   headache_q1: {
     question: {
       en: "Which best describes your pain?",
@@ -306,20 +317,21 @@ const SYMPTOM_NODES = {
     questionJa: "痛みの状態を教えてください",
     icon: "🤕",
     options: [
-      { label:{en:"Simple headache — no fever, no cold symptoms",
-               zh:"单纯头痛 — 无发烧、无感冒症状",
-               ko:"단순 두통 — 발열·감기 증상 없음"},
-        labelJa:"頭痛のみ（発熱・風邪症状なし）", next:"result_headache" },
-      { label:{en:"Headache + Fever",
-               zh:"头痛 + 发烧",
-               ko:"두통 + 발열"},
-        labelJa:"頭痛＋発熱", next:"result_fever" },
-      { label:{en:"Headache + Cold symptoms (runny nose, cough…)",
-               zh:"头痛 + 感冒症状（流鼻涕、咳嗽等）",
-               ko:"두통 + 감기 증상 (콧물, 기침 등)"},
-        labelJa:"頭痛＋風邪症状（鼻水・咳など）", next:"result_cold_general" },
+      { label: { en: "Simple headache — no fever, no cold symptoms",
+                 zh: "单纯头痛 — 无发烧、无感冒症状",
+                 ko: "단순 두통 — 발열·감기 증상 없음" },
+        labelJa: "頭痛のみ（発熱・風邪症状なし）", next: "result_headache" },
+      { label: { en: "Headache + Fever",
+                 zh: "头痛 + 发烧",
+                 ko: "두통 + 발열" },
+        labelJa: "頭痛＋発熱", next: "result_fever" },
+      { label: { en: "Headache + Cold symptoms (runny nose, cough…)",
+                 zh: "头痛 + 感冒症状（流鼻涕、咳嗽等）",
+                 ko: "두통 + 감기 증상 (콧물, 기침 등)" },
+        labelJa: "頭痛＋風邪症状（鼻水・咳など）", next: "result_cold_general" },
     ],
   },
+
   cold_q1: {
     question: {
       en: "What is your main cold symptom?",
@@ -329,24 +341,29 @@ const SYMPTOM_NODES = {
     questionJa: "主な風邪の症状を選んでください",
     icon: "🤧",
     options: [
-      { label:{en:"Runny nose / Sneezing (mainly)",
-               zh:"流鼻涕 / 打喷嚏（为主）",
-               ko:"콧물 / 재채기 (주로)"},
-        labelJa:"鼻水・くしゃみ（鼻症状中心）", next:"result_cold_nose" },
-      { label:{en:"Cough (mainly)",
-               zh:"咳嗽（为主）",
-               ko:"기침 (주로)"},
-        labelJa:"咳（咳症状中心）", next:"result_cold_cough" },
-      { label:{en:"Sore throat",
-               zh:"喉咙痛",
-               ko:"인후통 (목 아픔)"},
-        labelJa:"のどの痛み", next:"result_cold_throat" },
-      { label:{en:"Multiple symptoms — general cold",
-               zh:"多种综合症状 — 综合感冒",
-               ko:"복합 증상 — 종합 감기"},
-        labelJa:"複数の症状（総合感冒）", next:"result_cold_general" },
+      { label: { en: "Very early cold — just started, chills or stiff neck",
+                 zh: "感冒最初期 — 刚刚开始，畏寒或颈部僵硬",
+                 ko: "감기 초기 — 막 시작, 오한이나 목 뻐근함" },
+        labelJa: "感冒初期（悪寒・首のこわばり）", next: "result_cold_nose" },
+      { label: { en: "Runny nose / Sneezing (mainly)",
+                 zh: "流鼻涕 / 打喷嚏（为主）",
+                 ko: "콧물 / 재채기 (주로)" },
+        labelJa: "鼻水・くしゃみ（鼻症状中心）", next: "result_cold_nose" },
+      { label: { en: "Cough (mainly)",
+                 zh: "咳嗽（为主）",
+                 ko: "기침 (주로)" },
+        labelJa: "咳（咳症状中心）", next: "result_cold_cough" },
+      { label: { en: "Sore throat",
+                 zh: "喉咙痛",
+                 ko: "인후통 (목 아픔)" },
+        labelJa: "のどの痛み", next: "result_cold_throat" },
+      { label: { en: "Multiple symptoms — general cold",
+                 zh: "多种综合症状 — 综合感冒",
+                 ko: "복합 증상 — 종합 감기" },
+        labelJa: "複数の症状（総合感冒）", next: "result_cold_general" },
     ],
   },
+
   stomach_q1: {
     question: {
       en: "What stomach symptom do you have?",
@@ -356,16 +373,21 @@ const SYMPTOM_NODES = {
     questionJa: "胃腸の症状を選んでください",
     icon: "🤢",
     options: [
-      { label:{en:"Nausea / Vomiting",        zh:"恶心 / 呕吐",      ko:"메스꺼움 / 구토"},
-        labelJa:"吐き気・嘔吐", next:"result_nausea" },
-      { label:{en:"Diarrhea / Loose stools",  zh:"腹泻 / 稀便",      ko:"설사 / 묽은 변"},
-        labelJa:"下痢・軟便", next:"result_diarrhea" },
-      { label:{en:"Stomach cramps / Abdominal pain",zh:"胃痉挛 / 腹痛",ko:"복통 / 경련"},
-        labelJa:"腹痛・胃痛・腹部けいれん", next:"result_stomachpain" },
-      { label:{en:"Heartburn / Acid reflux",  zh:"烧心 / 胃酸反流",  ko:"가슴쓰림 / 위산 역류"},
-        labelJa:"胸やけ・胃酸逆流", next:"result_heartburn" },
+      { label: { en: "Nausea / Vomiting",           zh: "恶心 / 呕吐",       ko: "메스꺼움 / 구토" },
+        labelJa: "吐き気・嘔吐", next: "result_nausea" },
+      { label: { en: "Diarrhea / Loose stools",     zh: "腹泻 / 稀便",       ko: "설사 / 묽은 변" },
+        labelJa: "下痢・軟便", next: "result_diarrhea" },
+      { label: { en: "Stomach cramps / Abdominal pain",zh: "胃痉挛 / 腹痛",   ko: "복통 / 경련" },
+        labelJa: "腹痛・胃痛", next: "result_stomachpain" },
+      { label: { en: "Heartburn / Acid reflux",     zh: "烧心 / 胃酸反流",  ko: "가슴쓰림 / 위산 역류" },
+        labelJa: "胸やけ・胃酸逆流", next: "result_heartburn" },
+      { label: { en: "Bloating / Gas",              zh: "腹胀 / 胀气",       ko: "복부 팽만 / 가스" },
+        labelJa: "お腹の張り・ガス（膨満感）", next: "result_bloating" },
+      { label: { en: "Constipation",                zh: "便秘",              ko: "변비" },
+        labelJa: "便秘", next: "result_constipation" },
     ],
   },
+
   allergy_q1: {
     question: {
       en: "What type of allergy symptom?",
@@ -375,14 +397,34 @@ const SYMPTOM_NODES = {
     questionJa: "アレルギーの種類を選んでください",
     icon: "🌸",
     options: [
-      { label:{en:"Hay fever — sneezing, runny nose, itchy eyes",
-               zh:"花粉症 — 打喷嚏、流鼻涕、眼睛痒",
-               ko:"꽃가루 알레르기 — 재채기·콧물·눈 가려움"},
-        labelJa:"花粉症（くしゃみ・鼻水・目のかゆみ）", next:"result_hayfever" },
-      { label:{en:"Skin rash / Itching",
-               zh:"皮疹 / 皮肤瘙痒",
-               ko:"피부 발진 / 가려움"},
-        labelJa:"皮膚の発疹・かゆみ", next:"result_skin_allergy" },
+      { label: { en: "Hay fever — sneezing, runny nose, itchy eyes",
+                 zh: "花粉症 — 打喷嚏、流鼻涕、眼睛痒",
+                 ko: "꽃가루 알레르기 — 재채기·콧물·눈 가려움" },
+        labelJa: "花粉症（くしゃみ・鼻水・目のかゆみ）", next: "result_hayfever" },
+      { label: { en: "Hives / Skin rash / Itching",
+                 zh: "荨麻疹 / 皮疹 / 皮肤瘙痒",
+                 ko: "두드러기 / 피부 발진 / 가려움" },
+        labelJa: "じんましん・皮膚の発疹・かゆみ", next: "result_skin_allergy" },
+    ],
+  },
+
+  womens_q1: {
+    question: {
+      en: "What is your women's health concern?",
+      zh: "您有哪方面的女性健康问题？",
+      ko: "어떤 여성 건강 증상인가요?",
+    },
+    questionJa: "女性の健康症状を選んでください",
+    icon: "🌙",
+    options: [
+      { label: { en: "Menstrual pain / Irregular periods / Menopausal symptoms",
+                 zh: "痛经 / 月经不调 / 更年期症状",
+                 ko: "생리통 / 월경 불순 / 갱년기 증상" },
+        labelJa: "生理痛・月経不順・更年期症状", next: "result_menstrual" },
+      { label: { en: "Vaginal yeast infection — RECURRENCE ONLY (previously diagnosed by doctor)",
+                 zh: "阴道念珠菌感染 — 仅限复发（曾由医生确诊）",
+                 ko: "질 칸디다 감염 — 재발만 해당 (의사 진단 이력 있음)" },
+        labelJa: "膣カンジダ再発（医師の診断歴がある方のみ）", next: "result_candida" },
     ],
   },
 };
@@ -394,21 +436,41 @@ const SYMPTOM_NODES = {
 //     cautionFor: これらのconditionが選択されていたら薬剤師アラートを表示
 // ─────────────────────────────────────────────────────────────────────────
 const RESULT_NODES = {
-  result_headache:     { products:["loxonin_s","bufferin_a"],       cautionFor:["pregnancy","hypertension","kidney","child"] },
-  result_fever:        { products:["bufferin_a","loxonin_s"],       cautionFor:["pregnancy","child","kidney"] },
-  result_cold_nose:    { products:["benzablock_nose","pabron_gold"],cautionFor:["hypertension","child","pregnancy"] },
-  result_cold_cough:   { products:["pabron_gold","bron_liquid"],    cautionFor:["hypertension","pregnancy"] },
-  result_cold_throat:  { products:["stona_spray","nodonuru"],       cautionFor:[] },
-  result_cold_general: { products:["pabron_gold","benzablock_lp"],  cautionFor:["hypertension","child","pregnancy"] },
-  result_nausea:       { products:["seirogan_sugar","biofermin_s"], cautionFor:["pregnancy"] },
-  result_diarrhea:     { products:["seirogan_sugar","biofermin_s"], cautionFor:["pregnancy"] },
-  result_stomachpain:  { products:["buscopan","seirogan_sugar"],    cautionFor:["pregnancy","hypertension"] },
-  result_heartburn:    { products:["gaster_10","cabujin"],          cautionFor:[] },
-  result_hayfever:     { products:["allegra_fx","claritin_ex"],     cautionFor:["child"] },
-  result_skin_allergy: { products:["muhi_s","restamin"],            cautionFor:["child","pregnancy"] },
-  result_eye:          { products:["rohto_cool","sante_fx"],        cautionFor:[] },
-  result_muscle:       { products:["salonpas","feitas_gel"],        cautionFor:["pregnancy","kidney"] },
-  result_menstrual:    { products:["eve_a","naron_ace"],            cautionFor:["pregnancy"] },
+  // 頭痛・痛み
+  result_headache:     { products: ["loxonin_s"],                   cautionFor: ["pregnancy","hypertension","kidney"] },
+  result_fever:        { products: ["loxonin_s","kakkon_to"],        cautionFor: ["pregnancy","hypertension","kidney"] },
+  // 風邪
+  result_cold_nose:    { products: ["kakkon_to","pairon_pl"],        cautionFor: ["hypertension","child","pregnancy"] },
+  result_cold_cough:   { products: ["mejicon","pairon_pl"],          cautionFor: ["pregnancy"] },
+  result_cold_throat:  { products: ["pairon_pl","kakkon_to"],        cautionFor: ["hypertension","pregnancy"] },
+  result_cold_general: { products: ["pairon_pl","kakkon_to"],        cautionFor: ["hypertension","child","pregnancy"] },
+  // 胃腸
+  result_nausea:       { products: ["sukuratto","biosthree"],        cautionFor: ["pregnancy"] },
+  result_diarrhea:     { products: ["biosthree","ohta_isan"],        cautionFor: [] },
+  result_stomachpain:  { products: ["sukuratto","ohta_isan"],        cautionFor: ["pregnancy"] },
+  result_heartburn:    { products: ["ohta_isan_a","ohta_isan"],      cautionFor: [] },
+  result_bloating:     { products: ["gasupitan","ohta_isan"],        cautionFor: [] },
+  result_constipation: { products: ["sankamagn"],                   cautionFor: ["kidney"] },
+  // アレルギー
+  result_hayfever:     { products: ["zinmart","muhi_az"],            cautionFor: ["child","pregnancy"] },
+  result_skin_allergy: { products: ["muhi_az","zinmart"],            cautionFor: ["child","pregnancy"] },
+  // 目
+  result_eye:          { products: ["smile_40ex"],                   cautionFor: [] },
+  // 筋肉・関節
+  result_muscle:       { products: ["corihogusu"],                   cautionFor: ["pregnancy","child"] },
+  // 女性の健康
+  result_menstrual:    { products: ["inochi_haha","loxonin_s"],      cautionFor: ["pregnancy"] },
+  result_candida:      { products: ["furedi"],                       cautionFor: ["pregnancy","child"] },
+  // 乗り物酔い
+  result_motion:       { products: ["travelmin"],                    cautionFor: ["pregnancy"] },
+  // 虫刺され
+  result_insect:       { products: ["muhi_s","muhi_liquid"],         cautionFor: ["child","pregnancy"] },
+  // 切り傷・消毒
+  result_wound:        { products: ["makiron","oronain"],            cautionFor: [] },
+  // 口内炎
+  result_mouth:        { products: ["torafuru"],                     cautionFor: [] },
+  // 水分補給
+  result_hydration:    { products: ["os1","aquasorita"],             cautionFor: ["hypertension","kidney","diabetes"] },
 };
 
 
@@ -418,344 +480,380 @@ const RESULT_NODES = {
 //     cautionFor: この条件が選択されている場合、商品カードに注意書きを表示
 // ─────────────────────────────────────────────────────────────────────────
 const PRODUCTS = {
+
+  // ── 頭痛・痛み ──────────────────────────────────────────────
   loxonin_s: {
-    nameJa:"ロキソニンS",
-    name:{en:"Loxonin S",zh:"乐松S（洛索洛芬）",ko:"록소닌S"},
-    desc:{
-      en:"Fast-acting NSAID pain reliever and fever reducer. Effective for headache, dental pain, and general body pain.",
-      zh:"速效消炎镇痛退烧药，对头痛、牙痛和全身疼痛有显著疗效。",
-      ko:"빠른 효과의 NSAIDs 진통·해열제. 두통, 치통, 전신 통증에 효과적.",
+    nameJa: "ロキソニンS",
+    name: { en: "Loxonin S", zh: "乐松S（洛索洛芬）", ko: "록소닌S" },
+    desc: {
+      en: "Japan's leading fast-acting NSAID. Relieves headache, fever, dental pain, and general body pain within 30 minutes.",
+      zh: "日本最畅销的速效消炎镇痛退烧药，30分钟内缓解头痛、发烧、牙痛和全身疼痛。",
+      ko: "일본 최고의 빠른 효과 NSAIDs. 두통·발열·치통·전신 통증을 30분 이내에 완화.",
     },
-    image:"https://placehold.co/110x150/dbeafe/1e40af?text=ロキソニンS",
-    cautionFor:["pregnancy","hypertension","kidney"],
-    cautionDesc:{
-      en:"Avoid if pregnant or have kidney/heart disease. Use with caution if you have hypertension.",
-      zh:"孕妇及肾病、心脏病患者请避免使用。高血压患者请谨慎。",
-      ko:"임신 중, 신장·심장 질환 시 피하세요. 고혈압 시 주의.",
-    },
-  },
-  bufferin_a: {
-    nameJa:"バファリンA",
-    name:{en:"Bufferin A",zh:"百服宁A（阿司匹林）",ko:"버퍼린A"},
-    desc:{
-      en:"Aspirin-based analgesic effective for headaches and fever. Buffered formula is gentler on the stomach.",
-      zh:"阿司匹林类镇痛退烧药，含胃黏膜保护剂，对胃部刺激较小。",
-      ko:"두통·발열에 효과적인 아스피린 기반 진통제. 위장 보호 완충 제형.",
-    },
-    image:"https://placehold.co/110x150/dbeafe/1e40af?text=バファリンA",
-    cautionFor:["pregnancy","child"],
-    cautionDesc:{
-      en:"Not for children under 15 or pregnant women.",
-      zh:"15岁以下儿童及孕妇禁用。",
-      ko:"15세 미만 어린이 및 임산부는 사용 불가.",
+    image: "./images/loxonin_s.jpg",
+    cautionFor: ["pregnancy", "hypertension", "kidney"],
+    cautionDesc: {
+      en: "Avoid if pregnant or have kidney/heart disease. Use with caution with hypertension.",
+      zh: "孕妇及肾病、心脏病患者请避免使用。高血压患者请谨慎。",
+      ko: "임신 중, 신장·심장 질환 시 피하세요. 고혈압 시 주의.",
     },
   },
-  pabron_gold: {
-    nameJa:"パブロンゴールドA",
-    name:{en:"Pabron Gold A",zh:"帕布朗金牌A",ko:"파브론 골드A"},
-    desc:{
-      en:"Japan's most trusted multi-symptom cold medicine. Relieves runny nose, cough, fever, and sore throat simultaneously.",
-      zh:"日本最受信赖的综合感冒药，同时缓解流鼻涕、咳嗽、发烧和喉咙痛。",
-      ko:"일본의 신뢰받는 종합 감기약. 콧물·기침·발열·인후통을 동시에 완화.",
+
+  // ── 風邪・インフルエンザ ────────────────────────────────────
+  pairon_pl: {
+    nameJa: "パイロンPL錠ゴールド",
+    name: { en: "Pairon PL Gold Tablets", zh: "帕拉隆PL金片", ko: "파이론PL 골드정" },
+    desc: {
+      en: "Comprehensive cold medicine for multiple symptoms: runny nose, cough, fever, and sore throat — all in one tablet.",
+      zh: "综合感冒药，一片搞定流鼻涕、咳嗽、发烧和喉咙痛等多种症状。",
+      ko: "콧물·기침·발열·인후통을 한 알로 커버하는 종합 감기약.",
     },
-    image:"https://placehold.co/110x150/dcfce7/14532d?text=パブロンGA",
-    cautionFor:["hypertension","child","pregnancy"],
-    cautionDesc:{
-      en:"Consult pharmacist if you have hypertension, are pregnant, or administering to a child.",
-      zh:"高血压、孕妇或儿童用药前请咨询药剂师。",
-      ko:"고혈압·임신·어린이 복용 시 약사에게 상담하세요.",
-    },
-  },
-  benzablock_nose: {
-    nameJa:"ベンザブロック鼻炎薬α",
-    name:{en:"BenzaBlock Rhinitis α",zh:"苯扎布洛克鼻炎药α",ko:"벤자블록 비염약α"},
-    desc:{
-      en:"Targeted nasal relief for runny nose, congestion, and sneezing from cold or allergy.",
-      zh:"针对感冒或过敏引起的流鼻涕、鼻塞和打喷嚏，提供专项鼻部缓解。",
-      ko:"감기·알레르기로 인한 콧물, 코막힘, 재채기를 집중 완화.",
-    },
-    image:"https://placehold.co/110x150/dcfce7/14532d?text=ベンザブロックα",
-    cautionFor:["hypertension","diabetes"],
-    cautionDesc:{
-      en:"Caution if you have hypertension or diabetes. Consult pharmacist.",
-      zh:"高血压或糖尿病患者请注意，建议咨询药剂师。",
-      ko:"고혈압·당뇨 시 주의. 약사에게 상담하세요.",
+    image: "./images/pairon_pl.jpg",
+    cautionFor: ["pregnancy", "child", "hypertension"],
+    cautionDesc: {
+      en: "Consult pharmacist if pregnant, giving to a child, or if you have hypertension.",
+      zh: "孕妇、儿童或高血压患者使用前请咨询药剂师。",
+      ko: "임신 중, 어린이, 고혈압 시 약사에게 상담하세요.",
     },
   },
-  benzablock_lp: {
-    nameJa:"ベンザブロックLPカプセル",
-    name:{en:"BenzaBlock LP Capsule",zh:"苯扎布洛克LP胶囊",ko:"벤자블록LP 캡슐"},
-    desc:{
-      en:"Multi-symptom cold capsule covering runny nose, cough, sore throat, and mild fever.",
-      zh:"综合感冒胶囊，覆盖流鼻涕、咳嗽、喉咙痛和轻度发烧。",
-      ko:"콧물, 기침, 인후통, 경미한 발열을 포괄적으로 완화하는 복합 감기 캡슐.",
+  kakkon_to: {
+    nameJa: "ツムラ漢方 葛根湯エキス顆粒A",
+    name: { en: "Tsumura Kakkon-to Granules (Herbal)", zh: "津村汉方葛根汤颗粒", ko: "쯔무라 한방 갈근탕 과립" },
+    desc: {
+      en: "Traditional Japanese Kampo herbal medicine. Best taken at the very first sign of a cold — chills, stiff neck, or sneezing. Dissolve in hot water.",
+      zh: "日本传统汉方药。在感冒最初症状（畏寒、颈部僵硬、打喷嚏）出现时服用效果最佳，用热水冲服。",
+      ko: "일본 전통 한방약. 감기 초기 증상(오한·목 뻐근함·재채기)이 나타날 때 바로 복용하면 효과적. 뜨거운 물에 녹여 복용.",
     },
-    image:"https://placehold.co/110x150/dcfce7/14532d?text=ベンザブロックLP",
-    cautionFor:["hypertension","child"],
-    cautionDesc:{
-      en:"Caution with hypertension. Consult pharmacist for children under 15.",
-      zh:"高血压患者注意。15岁以下儿童请咨询药剂师。",
-      ko:"고혈압 주의. 15세 미만 어린이는 약사 상담 필요.",
-    },
-  },
-  bron_liquid: {
-    nameJa:"ブロン液",
-    name:{en:"Bron Cough Syrup",zh:"布朗止咳糖浆",ko:"브론 기침 시럽"},
-    desc:{
-      en:"Liquid cough medicine that suppresses persistent cough and helps loosen phlegm for easier breathing.",
-      zh:"液体止咳药，抑制持续性咳嗽并帮助稀释痰液，使呼吸更顺畅。",
-      ko:"지속적인 기침을 억제하고 가래를 녹여 호흡을 편안하게 해주는 시럽.",
-    },
-    image:"https://placehold.co/110x150/dcfce7/14532d?text=ブロン液",
-    cautionFor:["pregnancy"],
-    cautionDesc:{
-      en:"Consult pharmacist if pregnant.",
-      zh:"孕妇请咨询药剂师。",
-      ko:"임신 중이면 약사에게 상담하세요.",
+    image: "./images/kakkon_to.jpg",
+    cautionFor: ["pregnancy", "hypertension"],
+    cautionDesc: {
+      en: "Consult pharmacist if pregnant or have hypertension.",
+      zh: "孕妇或高血压患者请咨询药剂师。",
+      ko: "임신 중이거나 고혈압이 있으면 약사에게 상담하세요.",
     },
   },
-  stona_spray: {
-    nameJa:"ストナのどスプレーα",
-    name:{en:"Stona Throat Spray α",zh:"斯托纳咽喉喷雾α",ko:"스토나 목 스프레이α"},
-    desc:{
-      en:"Direct-spray antiseptic for fast relief from sore throat pain and inflammation.",
-      zh:"直接喷入咽喉，快速缓解喉咙痛和炎症。",
-      ko:"인후통·염증을 신속 완화하는 직접 분사형 방부 목 스프레이.",
+  mejicon: {
+    nameJa: "メジコンせき止め錠Pro",
+    name: { en: "Mejicon Cough Tablets Pro", zh: "美捷康止咳片Pro", ko: "메지콘 기침정 Pro" },
+    desc: {
+      en: "Cough suppressant that directly targets the cough center in the brain. Effective for persistent dry cough.",
+      zh: "直接作用于大脑咳嗽中枢的镇咳药，对持续性干咳效果显著。",
+      ko: "뇌의 기침 중추에 직접 작용하는 진해제. 지속적인 건조한 기침에 효과적.",
     },
-    image:"https://placehold.co/110x150/dcfce7/14532d?text=ストナSpray",
-    cautionFor:[],
-    cautionDesc:{en:"",zh:"",ko:""},
-  },
-  nodonuru: {
-    nameJa:"のどぬ〜るスプレー",
-    name:{en:"Nodo Nuru Throat Spray",zh:"喉舒适喷雾（日本知名品牌）",ko:"노도누루 목 스프레이"},
-    desc:{
-      en:"Antibacterial throat spray that soothes sore throat and prevents worsening. A household name in Japan.",
-      zh:"抗菌咽喉喷雾，缓解喉咙痛并防止病情加重，日本家喻户晓的品牌。",
-      ko:"인후통 완화 및 악화 예방을 위한 항균 목 스프레이. 일본의 대표적인 브랜드.",
-    },
-    image:"https://placehold.co/110x150/dcfce7/14532d?text=のどぬーる",
-    cautionFor:[],
-    cautionDesc:{en:"",zh:"",ko:""},
-  },
-  seirogan_sugar: {
-    nameJa:"正露丸糖衣A",
-    name:{en:"Seirogan Sugar-Coat A",zh:"正露丸糖衣A",ko:"세이로간 당의A"},
-    desc:{
-      en:"Classic Japanese stomach remedy. Odourless sugar-coated tablets for diarrhoea, stomach pain, and food poisoning.",
-      zh:"经典日本胃肠药，无气味糖衣片，适用于腹泻、胃痛和食物中毒。",
-      ko:"클래식 일본 위장약. 냄새 없는 당의정. 설사, 복통, 식중독에 사용.",
-    },
-    image:"https://placehold.co/110x150/fef9c3/92400e?text=正露丸糖衣A",
-    cautionFor:["pregnancy"],
-    cautionDesc:{
-      en:"Consult pharmacist if pregnant.",
-      zh:"孕妇请咨询药剂师。",
-      ko:"임신 중이면 약사에게 상담하세요.",
+    image: "./images/mejicon.jpg",
+    cautionFor: ["pregnancy"],
+    cautionDesc: {
+      en: "Consult pharmacist if pregnant.",
+      zh: "孕妇请咨询药剂师。",
+      ko: "임신 중이면 약사에게 상담하세요.",
     },
   },
-  biofermin_s: {
-    nameJa:"ビオフェルミンS錠",
-    name:{en:"Biofermin S Tablets",zh:"比菲德S益生菌片",ko:"비오페르민S정"},
-    desc:{
-      en:"Probiotic that restores healthy gut flora and relieves diarrhoea, constipation, and stomach upset.",
-      zh:"益生菌片，恢复肠道健康菌群，缓解腹泻、便秘和胃肠不适。",
-      ko:"장내 건강한 균총 회복 프로바이오틱. 설사·변비·위장 불편 완화.",
+
+  // ── 胃腸・消化器 ────────────────────────────────────────────
+  ohta_isan: {
+    nameJa: "太田胃散",
+    name: { en: "Ohta's Isan Stomach Powder", zh: "太田胃散（粉末）", ko: "오타이산 위장 분말" },
+    desc: {
+      en: "Japan's iconic stomach remedy since 1879. Powder form that rapidly relieves heartburn, acid reflux, bloating, and stomach discomfort after eating.",
+      zh: "日本1879年传承至今的经典胃药，粉末状，快速缓解烧心、胃酸、腹胀和餐后胃部不适。",
+      ko: "1879년부터 이어온 일본의 아이코닉한 위장약. 분말 형태로 가슴쓰림·위산·복부 팽만·식후 불편을 빠르게 완화.",
     },
-    image:"https://placehold.co/110x150/fef9c3/92400e?text=ビオフェルミンS",
-    cautionFor:[],
-    cautionDesc:{en:"",zh:"",ko:""},
+    image: "./images/ohta_isan.jpg",
+    cautionFor: [],
+    cautionDesc: { en: "", zh: "", ko: "" },
   },
-  buscopan: {
-    nameJa:"ブスコパン錠",
-    name:{en:"Buscopan",zh:"布斯科潘（丁溴东莨菪碱）",ko:"부스코판"},
-    desc:{
-      en:"Antispasmodic that quickly relieves stomach cramps, intestinal spasms, and abdominal pain.",
-      zh:"解痉药，快速缓解胃痉挛、肠道痉挛和腹痛。",
-      ko:"복부 경련, 장 경련, 복통을 빠르게 완화하는 진경제.",
+  ohta_isan_a: {
+    nameJa: "太田胃散A錠剤",
+    name: { en: "Ohta's Isan A Tablets", zh: "太田胃散A片剂", ko: "오타이산A 정제" },
+    desc: {
+      en: "Tablet version of the classic Ohta's Isan. Easy to carry and take, effective for heartburn and acid indigestion.",
+      zh: "经典太田胃散的便携片剂版本，有效缓解烧心和消化不良。",
+      ko: "클래식 오타이산의 정제 버전. 휴대하기 편리하며 가슴쓰림·소화불량에 효과적.",
     },
-    image:"https://placehold.co/110x150/fef9c3/92400e?text=ブスコパン",
-    cautionFor:["pregnancy","hypertension"],
-    cautionDesc:{
-      en:"Consult pharmacist if pregnant or if you have glaucoma or prostate issues.",
-      zh:"孕妇、青光眼或前列腺问题患者请咨询药剂师。",
-      ko:"임신 중이거나 녹내장·전립선 문제가 있으면 약사에게 상담하세요.",
-    },
+    image: "./images/ohta_isan_a.jpg",
+    cautionFor: [],
+    cautionDesc: { en: "", zh: "", ko: "" },
   },
-  gaster_10: {
-    nameJa:"ガスター10",
-    name:{en:"Gaster 10 (Famotidine)",zh:"盖世特10（法莫替丁）",ko:"가스터10 (파모티딘)"},
-    desc:{
-      en:"H2 blocker that quickly suppresses excess stomach acid. Effective for heartburn and acid reflux.",
-      zh:"H2受体阻断剂，快速抑制过多胃酸，有效缓解烧心和胃酸反流。",
-      ko:"과도한 위산을 빠르게 억제하는 H2 차단제. 가슴쓰림·역류에 효과적.",
+  sukuratto: {
+    nameJa: "スクラート胃腸薬",
+    name: { en: "Sukurato Stomach Medicine", zh: "速可拉托胃肠药", ko: "스쿠라토 위장약" },
+    desc: {
+      en: "Forms a protective coating over the stomach lining. Relieves stomach pain, nausea, and discomfort from gastritis or overeating.",
+      zh: "在胃黏膜上形成保护层，缓解胃炎或暴饮暴食引起的胃痛、恶心和胃部不适。",
+      ko: "위 점막에 보호막을 형성. 위염이나 과식으로 인한 위통·메스꺼움·위 불편을 완화.",
     },
-    image:"https://placehold.co/110x150/fef9c3/92400e?text=ガスター10",
-    cautionFor:[],
-    cautionDesc:{en:"",zh:"",ko:""},
-  },
-  cabujin: {
-    nameJa:"キャベジンコーワα",
-    name:{en:"Cabujin Kowa α",zh:"卷心菜精华胃药α",ko:"캐버진 코와α"},
-    desc:{
-      en:"Traditional Japanese stomach medicine with vitamin U (cabbage extract). Relieves heartburn, stomach discomfort, and indigestion.",
-      zh:"含维生素U（卷心菜提取物）的传统日本胃药，缓解烧心、胃部不适和消化不良。",
-      ko:"비타민U(양배추 추출물) 함유 전통 일본 위장약. 가슴쓰림·위 불편·소화불량 완화.",
-    },
-    image:"https://placehold.co/110x150/fef9c3/92400e?text=キャベジンα",
-    cautionFor:[],
-    cautionDesc:{en:"",zh:"",ko:""},
-  },
-  allegra_fx: {
-    nameJa:"アレグラFX",
-    name:{en:"Allegra FX (Fexofenadine)",zh:"阿乐加FX（非索非那定）",ko:"알레그라FX (페소페나딘)"},
-    desc:{
-      en:"Non-drowsy antihistamine for hay fever and seasonal allergies. Twice daily. Does not affect driving ability.",
-      zh:"用于花粉症和季节性过敏的无嗜睡抗组胺药，每日两次，不影响驾驶。",
-      ko:"꽃가루 알레르기와 계절성 알레르기를 위한 졸음 없는 항히스타민제. 하루 2회.",
-    },
-    image:"https://placehold.co/110x150/fce7f3/9d174d?text=アレグラFX",
-    cautionFor:["child"],
-    cautionDesc:{
-      en:"Not recommended for children under 15 without pharmacist guidance.",
-      zh:"15岁以下儿童需在药剂师指导下使用。",
-      ko:"약사 지도 없이 15세 미만 어린이에게는 권장하지 않습니다.",
+    image: "./images/sukuratto.jpg",
+    cautionFor: ["pregnancy"],
+    cautionDesc: {
+      en: "Consult pharmacist if pregnant.",
+      zh: "孕妇请咨询药剂师。",
+      ko: "임신 중이면 약사에게 상담하세요.",
     },
   },
-  claritin_ex: {
-    nameJa:"クラリチンEX",
-    name:{en:"Claritin EX (Loratadine)",zh:"克拉利汀EX（氯雷他定）",ko:"클라리틴EX (로라타딘)"},
-    desc:{
-      en:"Once-daily non-drowsy antihistamine for 24-hour allergy and hay fever relief.",
-      zh:"每日一次的无嗜睡抗组胺药，24小时持续缓解过敏和花粉症。",
-      ko:"24시간 알레르기·꽃가루 알레르기 완화를 위한 1일 1회 졸음 없는 항히스타민제.",
+  gasupitan: {
+    nameJa: "ガスピタン",
+    name: { en: "Gaspitan Gas & Bloating Relief", zh: "盖斯彼坦排气消胀药", ko: "가스피탄 가스·팽만 완화" },
+    desc: {
+      en: "Breaks down gas bubbles in the stomach and intestines. Relieves uncomfortable bloating and flatulence quickly.",
+      zh: "分解胃肠道中的气泡，快速缓解腹胀和胀气不适。",
+      ko: "위장 내 가스 거품을 분해. 불편한 복부 팽만과 가스를 빠르게 완화.",
     },
-    image:"https://placehold.co/110x150/fce7f3/9d174d?text=クラリチンEX",
-    cautionFor:["child"],
-    cautionDesc:{
-      en:"Consult pharmacist for children under 15.",
-      zh:"15岁以下儿童请咨询药剂师。",
-      ko:"15세 미만 어린이는 약사에게 상담하세요.",
+    image: "./images/gasupitan.jpg",
+    cautionFor: [],
+    cautionDesc: { en: "", zh: "", ko: "" },
+  },
+  biosthree: {
+    nameJa: "ビオスリーHi錠",
+    name: { en: "Bio-Three Hi Probiotic Tablets", zh: "维奥斯三Hi益生菌片", ko: "비오스리Hi 유산균정" },
+    desc: {
+      en: "Three-strain probiotic (Clostridium, Streptococcus, Bacillus) that rapidly restores healthy gut flora. Effective for diarrhea, irregular bowel, and stomach upset.",
+      zh: "三菌株益生菌（酪酸菌、乳酸菌、纳豆菌），快速恢复肠道健康菌群，有效缓解腹泻、肠道不规律和胃肠不适。",
+      ko: "3종 균주(낙산균·유산균·납두균) 프로바이오틱. 장내 균총을 빠르게 회복. 설사·불규칙한 장·위장 불편에 효과적.",
+    },
+    image: "./images/biosthree.jpg",
+    cautionFor: [],
+    cautionDesc: { en: "", zh: "", ko: "" },
+  },
+  sankamagn: {
+    nameJa: "酸化マグネシウムE便秘薬",
+    name: { en: "Magnesium Oxide E Laxative", zh: "氧化镁E便秘药", ko: "산화마그네슘E 변비약" },
+    desc: {
+      en: "Gentle osmotic laxative for constipation. Softens stools by drawing water into the intestines — no harsh cramping.",
+      zh: "温和渗透性泻药，通过将水分引入肠道软化大便，缓解便秘，不引起剧烈腹痛。",
+      ko: "장에 수분을 끌어들여 변을 부드럽게 하는 삼투성 변비약. 심한 경련 없이 부드럽게 작용.",
+    },
+    image: "./images/sankamagn.jpg",
+    cautionFor: ["kidney"],
+    cautionDesc: {
+      en: "Caution if you have kidney disease.",
+      zh: "肾病患者请注意。",
+      ko: "신장 질환이 있으면 주의하세요.",
     },
   },
+
+  // ── アレルギー ──────────────────────────────────────────────
+  zinmart: {
+    nameJa: "ジンマート錠",
+    name: { en: "Zinmart Antihistamine Tablets", zh: "辛马特抗组胺片", ko: "진마트 항히스타민정" },
+    desc: {
+      en: "Antihistamine for hives (urticaria), hay fever, and allergic symptoms. Relieves itching, sneezing, and runny nose.",
+      zh: "用于荨麻疹、花粉症和过敏症状的抗组胺药，缓解瘙痒、打喷嚏和流鼻涕。",
+      ko: "두드러기, 꽃가루 알레르기, 알레르기 증상을 위한 항히스타민제. 가려움·재채기·콧물 완화.",
+    },
+    image: "./images/zinmart.jpg",
+    cautionFor: ["child", "pregnancy"],
+    cautionDesc: {
+      en: "Consult pharmacist if pregnant or for children under 15. May cause drowsiness.",
+      zh: "孕妇或15岁以下儿童请咨询药剂师。可能引起嗜睡。",
+      ko: "임신 중이거나 15세 미만 어린이는 약사에게 상담하세요. 졸음이 올 수 있습니다.",
+    },
+  },
+  muhi_az: {
+    nameJa: "ムヒAZ錠",
+    name: { en: "Muhi AZ Antihistamine Tablets", zh: "无比滴AZ抗组胺片", ko: "무히AZ 항히스타민정" },
+    desc: {
+      en: "Antihistamine for hives, skin allergies, hay fever, and itching. From the trusted Muhi brand.",
+      zh: "用于荨麻疹、皮肤过敏、花粉症和瘙痒的抗组胺药，来自值得信赖的无比滴品牌。",
+      ko: "두드러기, 피부 알레르기, 꽃가루 알레르기, 가려움을 위한 항히스타민제. 무히 브랜드.",
+    },
+    image: "./images/muhi_az.jpg",
+    cautionFor: ["child", "pregnancy"],
+    cautionDesc: {
+      en: "Consult pharmacist if pregnant or for children under 15. May cause drowsiness.",
+      zh: "孕妇或15岁以下儿童请咨询药剂师。可能引起嗜睡。",
+      ko: "임신 중이거나 15세 미만 어린이는 약사에게 상담하세요. 졸음이 올 수 있습니다.",
+    },
+  },
+
+  // ── 目の症状 ─────────────────────────────────────────────────
+  smile_40ex: {
+    nameJa: "スマイル40EX",
+    name: { en: "Smile 40EX Eye Drops", zh: "露笑40EX眼药水", ko: "스마일40EX 안약" },
+    desc: {
+      en: "Eye drops for redness, eye fatigue, itching, and blurred vision. Contains 4 active ingredients for all-round eye care.",
+      zh: "含4种有效成分的全效眼药水，缓解眼红、眼疲劳、瘙痒和视力模糊。",
+      ko: "4가지 유효 성분 함유. 충혈·눈 피로·가려움·흐린 시야를 위한 종합 안약.",
+    },
+    image: "./images/smile_40ex.jpg",
+    cautionFor: [],
+    cautionDesc: { en: "", zh: "", ko: "" },
+  },
+
+  // ── 筋肉・関節 ──────────────────────────────────────────────
+  corihogusu: {
+    nameJa: "コリホグス錠",
+    name: { en: "Corihogus Muscle Relaxant Tablets", zh: "可利霍格斯肌肉松弛片", ko: "코리호구스 근이완제 정" },
+    desc: {
+      en: "Muscle relaxant for stiff shoulders, stiff neck, and lower back pain. Eases tension in tight muscles.",
+      zh: "肌肉松弛剂，用于肩膀僵硬、颈部僵硬和腰痛，有效缓解肌肉紧张。",
+      ko: "어깨 결림, 목 뻐근함, 허리 통증을 위한 근이완제. 긴장된 근육의 경직을 완화.",
+    },
+    image: "./images/corihogusu.jpg",
+    cautionFor: ["pregnancy", "child"],
+    cautionDesc: {
+      en: "Not recommended for pregnant women or children under 15.",
+      zh: "孕妇或15岁以下儿童不建议使用。",
+      ko: "임신 중이거나 15세 미만 어린이에게는 권장하지 않습니다.",
+    },
+  },
+
+  // ── 女性の健康 ──────────────────────────────────────────────
+  inochi_haha: {
+    nameJa: "命の母A",
+    name: { en: "Inochi no Haha A (Women's Herbal)", zh: "命之母A女性汉方药", ko: "이노치노하하A 여성 한방약" },
+    desc: {
+      en: "Traditional Japanese Kampo supplement for women. Relieves menstrual pain, irregular periods, and menopausal symptoms with 13 types of herbal ingredients.",
+      zh: "日本传统女性汉方药，含13种草药成分，缓解痛经、月经不调和更年期症状。",
+      ko: "13종 한방 생약 함유 일본 전통 여성 한방 보충제. 생리통·월경 불순·갱년기 증상 완화.",
+    },
+    image: "./images/inochi_haha.jpg",
+    cautionFor: ["pregnancy"],
+    cautionDesc: {
+      en: "Not for pregnant women. Consult pharmacist.",
+      zh: "孕妇禁用，请咨询药剂师。",
+      ko: "임산부는 사용 불가. 약사에게 상담하세요.",
+    },
+  },
+  furedi: {
+    nameJa: "フレディCC1A",
+    name: { en: "Fredy CC1A (Vaginal Yeast Infection)", zh: "福来迪CC1A（阴道念珠菌复发治疗）", ko: "프레디CC1A (질 칸디다 재발 치료)" },
+    desc: {
+      en: "One-dose vaginal applicator for recurrent vaginal candidiasis (yeast infection). FOR RECURRENCE ONLY — use only if you have been previously diagnosed by a doctor.",
+      zh: "单次阴道给药治疗复发性阴道念珠菌感染（霉菌感染）。仅用于复发——只有曾经由医生确诊过才可使用。",
+      ko: "질 칸디다증(효모 감염) 재발 치료용 1회 투여 삽입형. 재발 전용 — 의사에게 이전에 진단받은 경우에만 사용하세요.",
+    },
+    image: "./images/furedi.jpg",
+    cautionFor: ["pregnancy", "child"],
+    cautionDesc: {
+      en: "Not for pregnant women or those under 15. Must be a recurrence of a doctor-diagnosed infection.",
+      zh: "孕妇或15岁以下女性禁用。必须是医生确诊感染的复发情况才可使用。",
+      ko: "임산부 또는 15세 미만은 사용 불가. 반드시 의사 진단을 받은 감염의 재발 시에만 사용하세요.",
+    },
+  },
+
+  // ── 乗り物酔い ──────────────────────────────────────────────
+  travelmin: {
+    nameJa: "トラベルミンファミリー",
+    name: { en: "Travelmin Family (Motion Sickness)", zh: "旅行明家庭装（晕动病）", ko: "트라벨민 패밀리 (멀미)" },
+    desc: {
+      en: "Motion sickness medicine for car, bus, boat, and airplane travel. Suitable for children 5+ and adults. Take 30 minutes before departure.",
+      zh: "适用于乘坐汽车、巴士、轮船和飞机时的晕动病药，适合5岁以上儿童和成人，出发前30分钟服用。",
+      ko: "자동차·버스·선박·비행기 멀미 예방약. 5세 이상 어린이와 성인에게 적합. 출발 30분 전에 복용.",
+    },
+    image: "./images/travelmin.jpg",
+    cautionFor: ["pregnancy"],
+    cautionDesc: {
+      en: "Consult pharmacist if pregnant.",
+      zh: "孕妇请咨询药剂师。",
+      ko: "임신 중이면 약사에게 상담하세요.",
+    },
+  },
+
+  // ── 虫刺され・皮膚 ──────────────────────────────────────────
   muhi_s: {
-    nameJa:"ムヒS軟膏",
-    name:{en:"Muhi-S Ointment",zh:"无比滴S软膏",ko:"무히S 연고"},
-    desc:{
-      en:"Japan's most popular topical cream for skin itching, rash, insect bites, and mild eczema.",
-      zh:"日本最受欢迎的皮肤外用药，适用于皮肤瘙痒、皮疹、虫咬和轻度湿疹。",
-      ko:"피부 가려움, 발진, 벌레 물림, 경미한 습진을 위한 일본의 가장 인기 있는 외용 크림.",
+    nameJa: "ムヒS 20g",
+    name: { en: "Muhi-S Ointment 20g", zh: "无比滴S软膏20g", ko: "무히S 연고 20g" },
+    desc: {
+      en: "Japan's most popular ointment for mosquito bites and insect stings. Relieves itching and swelling fast.",
+      zh: "日本最受欢迎的蚊虫叮咬药膏，快速缓解瘙痒和肿胀。",
+      ko: "일본의 가장 인기 있는 모기·벌레 물림 연고. 가려움과 붓기를 빠르게 완화.",
     },
-    image:"https://placehold.co/110x150/fce7f3/9d174d?text=ムヒS",
-    cautionFor:["child","pregnancy"],
-    cautionDesc:{
-      en:"Consult pharmacist if pregnant or applying to young children.",
-      zh:"孕妇或幼儿使用前请咨询药剂师。",
-      ko:"임신 중이거나 어린이에게 사용 시 약사에게 상담하세요.",
-    },
-  },
-  restamin: {
-    nameJa:"レスタミンコーワ軟膏",
-    name:{en:"Restamin Kowa Ointment",zh:"瑞丝塔明考华软膏",ko:"레스타민 코와 연고"},
-    desc:{
-      en:"Antihistamine topical ointment for skin itching, hives, rash, and insect bites.",
-      zh:"抗组胺外用软膏，适用于皮肤瘙痒、荨麻疹、皮疹和虫咬。",
-      ko:"피부 가려움, 두드러기, 발진, 벌레 물림을 위한 항히스타민 외용 연고.",
-    },
-    image:"https://placehold.co/110x150/fce7f3/9d174d?text=レスタミン",
-    cautionFor:["child","pregnancy"],
-    cautionDesc:{
-      en:"Consult pharmacist if pregnant or applying to young children.",
-      zh:"孕妇或幼儿使用前请咨询药剂师。",
-      ko:"임신 중이거나 어린이에게 사용 시 약사에게 상담하세요.",
+    image: "./images/muhi_s.jpg",
+    cautionFor: ["child", "pregnancy"],
+    cautionDesc: {
+      en: "Consult pharmacist if pregnant or applying to young children.",
+      zh: "孕妇或幼儿使用前请咨询药剂师。",
+      ko: "임신 중이거나 어린이에게 사용 시 약사에게 상담하세요.",
     },
   },
-  rohto_cool: {
-    nameJa:"ロート目薬40α",
-    name:{en:"Rohto Eye Drops 40α",zh:"乐敦清凉眼药水40α",ko:"로토 안약40α"},
-    desc:{
-      en:"Refreshing cooling eye drops for redness, eye fatigue, and itching. Iconic Japanese eye drop brand.",
-      zh:"清凉提神眼药水，缓解眼红、眼睛疲劳和瘙痒，日本标志性眼药水品牌。",
-      ko:"충혈, 눈 피로, 가려움을 위한 상쾌한 쿨링 안약. 일본의 아이코닉한 안약 브랜드.",
+  muhi_liquid: {
+    nameJa: "液体ムヒS",
+    name: { en: "Muhi-S Liquid", zh: "液体无比滴S", ko: "액체 무히S" },
+    desc: {
+      en: "Liquid formula Muhi for insect bites. Quick-drying and easy to apply on large or hard-to-reach areas.",
+      zh: "液体型无比滴，用于虫咬，快速干燥，易于涂抹在较大或难以触及的区域。",
+      ko: "벌레 물림을 위한 무히 액체 타입. 빠르게 건조되며 넓은 부위나 바르기 어려운 부위에 편리.",
     },
-    image:"https://placehold.co/110x150/e0f2fe/0c4a6e?text=ロート目薬40α",
-    cautionFor:[],
-    cautionDesc:{en:"",zh:"",ko:""},
-  },
-  sante_fx: {
-    nameJa:"サンテFX V+",
-    name:{en:"Sante FX V+",zh:"参天FX V+眼药水",ko:"산테FX V+ 안약"},
-    desc:{
-      en:"Vitamin-enriched eye drops for tired, irritated eyes and contact lens users.",
-      zh:"富含维生素的眼药水，适合眼睛疲劳、刺激和隐形眼镜佩戴者。",
-      ko:"눈 피로, 자극, 콘택트렌즈 착용자를 위한 비타민 강화 안약.",
-    },
-    image:"https://placehold.co/110x150/e0f2fe/0c4a6e?text=サンテFX+V%2B",
-    cautionFor:[],
-    cautionDesc:{en:"",zh:"",ko:""},
-  },
-  salonpas: {
-    nameJa:"サロンパス",
-    name:{en:"Salonpas Patches",zh:"撒隆巴斯贴片",ko:"사론파스 패치"},
-    desc:{
-      en:"Medicated adhesive patches applied directly to skin. Effective for muscle pain, stiff shoulders, and back pain.",
-      zh:"直接贴于皮肤的药用贴片，有效缓解肌肉疼痛、肩膀酸痛和腰痛。",
-      ko:"피부에 직접 붙이는 의약 부착 패치. 근육통, 어깨 결림, 허리 통증에 효과적.",
-    },
-    image:"https://placehold.co/110x150/f3e8ff/6b21a8?text=サロンパス",
-    cautionFor:["pregnancy"],
-    cautionDesc:{
-      en:"Consult pharmacist if pregnant.",
-      zh:"孕妇请咨询药剂师。",
-      ko:"임신 중이면 약사에게 상담하세요.",
+    image: "./images/muhi_liquid.jpg",
+    cautionFor: ["child"],
+    cautionDesc: {
+      en: "Consult pharmacist for young children.",
+      zh: "幼儿使用前请咨询药剂师。",
+      ko: "어린이에게 사용 시 약사에게 상담하세요.",
     },
   },
-  feitas_gel: {
-    nameJa:"フェイタスZαゲル",
-    name:{en:"Feitas Zα Gel",zh:"菲塔斯Zα消炎凝胶",ko:"페이타스Zα 젤"},
-    desc:{
-      en:"Anti-inflammatory NSAID gel for joint pain, sports injuries, and chronic muscle aches.",
-      zh:"非甾体消炎凝胶，对关节疼痛、运动损伤和慢性肌肉酸痛有效。",
-      ko:"관절통, 스포츠 부상, 만성 근육통을 위한 항염 NSAIDs 젤.",
+
+  // ── 切り傷・消毒 ────────────────────────────────────────────
+  makiron: {
+    nameJa: "マキロンS",
+    name: { en: "Makiron S Antiseptic Solution", zh: "马奇隆S消毒液", ko: "마끼론S 소독액" },
+    desc: {
+      en: "Gentle antiseptic solution for disinfecting minor cuts, scrapes, and wounds. Low-sting formula, safe for children.",
+      zh: "温和消毒液，用于清洁小切口、擦伤和伤口，刺激性低，儿童可安全使用。",
+      ko: "작은 상처·찰과상·부상을 소독하는 부드러운 소독액. 자극이 적어 어린이에게도 안전.",
     },
-    image:"https://placehold.co/110x150/f3e8ff/6b21a8?text=フェイタスZα",
-    cautionFor:["pregnancy","kidney"],
-    cautionDesc:{
-      en:"Avoid if pregnant or have kidney disease.",
-      zh:"孕妇或肾病患者请避免使用。",
-      ko:"임신 중이거나 신장 질환이 있으면 피하세요.",
+    image: "./images/makiron.jpg",
+    cautionFor: [],
+    cautionDesc: { en: "", zh: "", ko: "" },
+  },
+  oronain: {
+    nameJa: "オロナインH軟膏 11g",
+    name: { en: "Oronine H Ointment 11g", zh: "欧乐宁H软膏11g", ko: "오로나인H 연고 11g" },
+    desc: {
+      en: "Japan's beloved multipurpose skin ointment. Effective for minor cuts, minor burns, pimples, rough cracked skin, and insect bites.",
+      zh: "日本家喻户晓的多用途皮肤软膏，适用于小切口、轻度烫伤、痘痘、皮肤粗糙皲裂和虫咬。",
+      ko: "일본 국민 다목적 피부 연고. 작은 상처·경미한 화상·여드름·갈라진 피부·벌레 물림에 효과적.",
+    },
+    image: "./images/oronain.jpg",
+    cautionFor: [],
+    cautionDesc: { en: "", zh: "", ko: "" },
+  },
+
+  // ── 口内炎 ──────────────────────────────────────────────────
+  torafuru: {
+    nameJa: "トラフル軟膏 PROクイック 5g",
+    name: { en: "Traful Ointment PRO Quick 5g", zh: "朵拉芙软膏PRO快速5g", ko: "트라풀 연고PRO퀵 5g" },
+    desc: {
+      en: "Fast-acting ointment for mouth ulcers (canker sores). Apply a small amount directly to the sore to relieve pain quickly.",
+      zh: "口腔溃疡速效软膏，将少量直接涂于溃疡处，快速缓解疼痛。",
+      ko: "구내염을 위한 빠른 효과 연고. 환부에 소량을 직접 발라 통증을 빠르게 완화.",
+    },
+    image: "./images/torafuru.jpg",
+    cautionFor: [],
+    cautionDesc: { en: "", zh: "", ko: "" },
+  },
+
+  // ── 脱水・水分補給 ──────────────────────────────────────────
+  os1: {
+    nameJa: "OS-1",
+    name: { en: "OS-1 Oral Rehydration Solution", zh: "OS-1口服补液盐", ko: "OS-1 경구수액" },
+    desc: {
+      en: "Medical-grade oral rehydration solution. Designed for dehydration from heat exhaustion, fever, diarrhea, or vomiting. More effective than water or sports drinks.",
+      zh: "医疗级口服补液盐，专为中暑、发烧、腹泻或呕吐引起的脱水设计，比水或运动饮料更有效。",
+      ko: "의료용 경구수액. 열사병·발열·설사·구토로 인한 탈수에 물이나 스포츠음료보다 효과적.",
+    },
+    image: "./images/os1.jpg",
+    cautionFor: ["hypertension", "kidney", "diabetes"],
+    cautionDesc: {
+      en: "Caution if you have high blood pressure, kidney disease, or diabetes. Consult pharmacist.",
+      zh: "高血压、肾病或糖尿病患者请注意，咨询药剂师。",
+      ko: "고혈압·신장 질환·당뇨병이 있으면 주의하세요. 약사에게 상담하세요.",
     },
   },
-  eve_a: {
-    nameJa:"イブA錠",
-    name:{en:"Eve A Tablets (Ibuprofen)",zh:"伊芙A片（布洛芬）",ko:"이브A정 (이부프로펜)"},
-    desc:{
-      en:"Ibuprofen-based pain reliever especially effective for menstrual cramps and headaches.",
-      zh:"布洛芬类镇痛药，对生理痛和头痛特别有效。",
-      ko:"생리통과 두통에 특히 효과적인 이부프로펜 기반 진통제.",
+  aquasorita: {
+    nameJa: "アクアソリタ",
+    name: { en: "Aquasolita Electrolyte Drink", zh: "爱可水电解质饮料", ko: "아쿠아소리타 전해질 음료" },
+    desc: {
+      en: "Electrolyte drink for mild dehydration and heat prevention. Pleasant taste — suitable for everyday hydration in hot weather.",
+      zh: "用于轻度脱水和预防中暑的电解质饮料，口感好，适合炎热天气日常补水。",
+      ko: "경미한 탈수와 더위 예방을 위한 전해질 음료. 맛이 좋아 더운 날씨의 일상적인 수분 보충에 적합.",
     },
-    image:"https://placehold.co/110x150/fce7f3/9d174d?text=イブA錠",
-    cautionFor:["pregnancy"],
-    cautionDesc:{
-      en:"Avoid during pregnancy, especially in the 3rd trimester.",
-      zh:"孕妇禁用，尤其是妊娠晚期。",
-      ko:"임신 중 사용 금지. 특히 임신 3기에는 절대 사용하지 마세요.",
-    },
-  },
-  naron_ace: {
-    nameJa:"ナロンエースT",
-    name:{en:"Naron Ace T",zh:"纳龙艾斯T",ko:"나론 에이스T"},
-    desc:{
-      en:"Fast-acting tablets for menstrual pain, headache, and general pain. Contains ibuprofen.",
-      zh:"速效镇痛片，适用于生理痛、头痛和一般疼痛，含布洛芬成分。",
-      ko:"생리통, 두통, 일반 통증을 위한 빠른 효과 정제. 이부프로펜 함유.",
-    },
-    image:"https://placehold.co/110x150/fce7f3/9d174d?text=ナロンエースT",
-    cautionFor:["pregnancy"],
-    cautionDesc:{
-      en:"Avoid during pregnancy.",
-      zh:"孕妇禁用。",
-      ko:"임신 중 사용 금지.",
+    image: "./images/aquasorita.jpg",
+    cautionFor: ["hypertension", "diabetes"],
+    cautionDesc: {
+      en: "Caution if you have high blood pressure or diabetes.",
+      zh: "高血压或糖尿病患者请注意。",
+      ko: "고혈압이나 당뇨병이 있으면 주의하세요.",
     },
   },
 };
